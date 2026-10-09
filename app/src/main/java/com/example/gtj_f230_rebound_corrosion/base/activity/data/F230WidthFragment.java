@@ -71,15 +71,27 @@ public class F230WidthFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        zoneBean = GreenDaoHelper.getDaoSession(getActivity()).getZoneBeanDao().load(zoneBean.id);
-
-        if (zoneBean == null || zoneBean.f230ZoneBean == null || TextUtils.isEmpty(zoneBean.f230ZoneBean.strZoneList)) {
+        //页面重建时 onAttach 可能早于宿主赋值 zoneBean，这里兜底重新获取，避免空指针
+        if (zoneBean == null && getActivity() instanceof DataDetailsActivity) {
+            zoneBean = ((DataDetailsActivity) getActivity()).getZoneBean();
+        }
+        if (zoneBean == null || zoneBean.id == null) {
+            binding.tvNull.setVisibility(VISIBLE);
+            return;
+        }
+        ZoneBean dbZoneBean = GreenDaoHelper.getDaoSession(getActivity()).getZoneBeanDao().load(zoneBean.id);
+        if (dbZoneBean == null || dbZoneBean.f230ZoneBean == null || TextUtils.isEmpty(dbZoneBean.f230ZoneBean.strZoneList)) {
+            binding.tvNull.setVisibility(VISIBLE);
+            return;
+        }
+        zoneBean = dbZoneBean;
+        widthBeanList = new Gson().fromJson(zoneBean.f230ZoneBean.strZoneList, new TypeToken<List<WidthBean>>() {
+        }.getType());
+        if (widthBeanList == null || widthBeanList.isEmpty()) {
             binding.tvNull.setVisibility(VISIBLE);
             return;
         }
         binding.tvNull.setVisibility(GONE);
-        widthBeanList = new Gson().fromJson(zoneBean.f230ZoneBean.strZoneList, new TypeToken<List<WidthBean>>() {
-        }.getType());
         for (int i = 0; i < widthBeanList.size(); i++) {
             widthBeanList.get(i).isSelected = i == 0;
         }

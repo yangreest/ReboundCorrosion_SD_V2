@@ -17,6 +17,7 @@ import com.example.gtj_f230_rebound_corrosion.base.activity.data.DataDetailsActi
 import com.example.gtj_f230_rebound_corrosion.base.model.ProjectBean;
 import com.example.gtj_f230_rebound_corrosion.base.model.ZoneBean;
 import com.example.gtj_f230_rebound_corrosion.base.storage.GreenDaoHelper;
+import com.example.gtj_f230_rebound_corrosion.base.utils.RecycleBinUtils;
 import com.example.gtj_f230_rebound_corrosion.base.utils.SpinnerUtils;
 import com.example.gtj_f230_rebound_corrosion.base.view.StyleAlertDialog;
 import com.example.gtj_f230_rebound_corrosion.corrosion.activity.testing.CorrosionDetectActivity2;
@@ -27,6 +28,7 @@ import com.example.gtj_f230_rebound_corrosion.rebound.activity.testing.Rebounder
 import com.example.gtj_f230_rebound_corrosion.thickness.activity.DetectActivity;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @SuppressLint("SetTextI18n")
@@ -247,6 +249,11 @@ private void dotClick() {
             return;
         }
         zoneBean = zoneBeanList.get(0);
+        //防御：正在检测（含新建）的构件不应被回收站记录隐藏。回收站记录与数据库
+        //主键序列可能因数据库重建/恢复而不同步，导致新测试数据的主键命中旧回收站记录。
+        if (zoneBean.id != null) {
+            RecycleBinUtils.removeZones(Collections.singletonList(zoneBean.id));
+        }
 
         binding.tvF230Num.setText("测点数：" + (zoneBean.f230ZoneBean == null ? 0 : zoneBean.f230ZoneBean.zoneCount));
         binding.tvReboundNum.setText("测点数：" + (zoneBean.rebounderZoneBean == null ? 0 : zoneBean.rebounderZoneBean.zoneCount));

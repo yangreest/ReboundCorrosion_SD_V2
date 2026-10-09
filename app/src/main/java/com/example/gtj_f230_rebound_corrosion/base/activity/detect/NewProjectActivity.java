@@ -8,9 +8,11 @@ import com.example.gtj_f230_rebound_corrosion.base.activity.BaseActivity;
 import com.example.gtj_f230_rebound_corrosion.base.model.ProjectBean;
 import com.example.gtj_f230_rebound_corrosion.base.storage.GreenDaoHelper;
 import com.example.gtj_f230_rebound_corrosion.base.utils.OtherUtils;
+import com.example.gtj_f230_rebound_corrosion.base.utils.RecycleBinUtils;
 import com.example.gtj_f230_rebound_corrosion.databinding.ActNewProjectBinding;
 import com.example.gtj_f230_rebound_corrosion.functions.database.greenDao.db.ProjectBeanDao;
 
+import java.util.Collections;
 import java.util.List;
 
 @SuppressLint("SetTextI18n")
@@ -50,7 +52,10 @@ public class NewProjectActivity extends BaseActivity<ActNewProjectBinding> {
             ToastUtils.showShort("已存在相同的工程名称，请修改");
             return;
         }
-        GreenDaoHelper.getDaoSession(this).getProjectBeanDao().insert(new ProjectBean(strProjectName, strProjectAddress));
+        long newProjectId = GreenDaoHelper.getDaoSession(this).getProjectBeanDao().insert(new ProjectBean(strProjectName, strProjectAddress));
+        //防御：回收站记录（SharedPreferences）与数据库主键序列可能因数据库重建/恢复而不同步，
+        //导致新建工程的主键恰好命中旧的回收站记录而被直接隐藏。创建后立即清除该主键。
+        RecycleBinUtils.removeProjects(Collections.singletonList(newProjectId));
         ToastUtils.showShort("创建成功");
         setResult(RESULT_OK);
         finish();
