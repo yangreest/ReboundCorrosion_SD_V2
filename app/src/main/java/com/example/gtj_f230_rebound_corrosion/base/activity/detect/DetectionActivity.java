@@ -30,6 +30,7 @@ import com.example.gtj_f230_rebound_corrosion.thickness.activity.DetectActivity;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 @SuppressLint("SetTextI18n")
 public class DetectionActivity extends BaseActivity<ActDetectionBinding> {
@@ -274,7 +275,18 @@ private void dotClick() {
     }
 
     private void setProjectList(boolean isLast) {
-        List<ProjectBean> projectBeanList = GreenDaoHelper.getDaoSession(this).getProjectBeanDao().loadAll();
+        //回收站中的工程不应出现在下拉框里
+        Set<Long> recycledProjectIds = RecycleBinUtils.getRecycledProjectIds();
+        List<ProjectBean> allProjectList = GreenDaoHelper.getDaoSession(this).getProjectBeanDao().loadAll();
+        List<ProjectBean> projectBeanList = new ArrayList<>();
+        if (allProjectList != null) {
+            for (ProjectBean bean : allProjectList) {
+                if (bean == null || bean.id == null || recycledProjectIds.contains(bean.id)) {
+                    continue;
+                }
+                projectBeanList.add(bean);
+            }
+        }
         List<String> projectList = new ArrayList<>();
         for (ProjectBean bean : projectBeanList) {
             projectList.add(bean.name);
@@ -284,7 +296,9 @@ private void dotClick() {
             binding.etAddress.setText(projectBeanList.get(position).getAddress());
         });
         if (isLast) {
-            binding.spProject.setDefaultContent(projectList.get(projectList.size() - 1));  //工程名称
+            if (!projectList.isEmpty()) {
+                binding.spProject.setDefaultContent(projectList.get(projectList.size() - 1));  //工程名称
+            }
         } else {
             ZoneBean lastZoneBean = GreenDaoHelper.getDaoSession(this).getZoneBeanDao().queryBuilder().orderDesc(ZoneBeanDao.Properties.Id).limit(1).unique();
             if (lastZoneBean != null) {
