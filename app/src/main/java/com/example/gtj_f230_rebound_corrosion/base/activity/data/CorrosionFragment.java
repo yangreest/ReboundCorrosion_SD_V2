@@ -65,10 +65,12 @@ public class CorrosionFragment extends Fragment {
 
         //截面积
         double designR = 0.0;
-        try {
-            designR = Double.parseDouble(zoneBean.corrosionZoneBean.rebarDiameter) / 2;
-        } catch (NumberFormatException e) {
-            designR = 0.0;
+        if (!TextUtils.isEmpty(zoneBean.corrosionZoneBean.rebarDiameter)) {
+            try {
+                designR = Double.parseDouble(zoneBean.corrosionZoneBean.rebarDiameter) / 2;
+            } catch (NumberFormatException e) {
+                designR = 0.0;
+            }
         }
         double designArea = StringUtils.getRounding(Math.PI * designR * designR, 2);
 
@@ -185,8 +187,12 @@ public class CorrosionFragment extends Fragment {
         if (TextUtils.isEmpty(distance) || TextUtils.isEmpty(zoneBean.corrosionZoneBean.poleHeight)) {
             return false;
         }
-        int distanceInt = (int) Double.parseDouble(distance);
-        int poleHeight = (int) Double.parseDouble(zoneBean.corrosionZoneBean.poleHeight);
-        return distanceInt <= poleHeight;
+        try {
+            int distanceInt = (int) Double.parseDouble(distance);
+            int poleHeight = (int) Double.parseDouble(zoneBean.corrosionZoneBean.poleHeight);
+            return distanceInt <= poleHeight;
+        } catch (NumberFormatException e) {
+            return false;
+        }
     }
 }
