@@ -62,8 +62,17 @@ public class ThicknessFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         color000 = ContextCompat.getColor(requireActivity(), R.color.color000);
         colorFF9600 = ContextCompat.getColor(requireActivity(), R.color.colorFF9600);
+        //页面重建时 onAttach 可能早于宿主赋值 zoneBean，这里兜底重新获取，并先判空再解引用
+        if (zoneBean == null && getActivity() instanceof DataDetailsActivity) {
+            zoneBean = ((DataDetailsActivity) getActivity()).getZoneBean();
+        }
+        if (zoneBean == null) {
+            binding.llData.setVisibility(GONE);
+            binding.tvNull.setVisibility(VISIBLE);
+            return;
+        }
         rebarZoneBean = GreenDaoHelper.getDaoSession(requireActivity()).getRebar240ZoneBeanDao().load(zoneBean.thicknessId);
-        if (zoneBean == null || rebarZoneBean == null) {
+        if (rebarZoneBean == null) {
             binding.llData.setVisibility(GONE);
             binding.tvNull.setVisibility(VISIBLE);
             return;

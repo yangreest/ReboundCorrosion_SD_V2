@@ -57,15 +57,8 @@ public class DataDetailsActivity extends BaseActivity<ActDataDetailsBinding> {
     @Override
     protected void initView() {
         ProjectBean projectBean = (ProjectBean) getIntent().getSerializableExtra("ProjectBean");
-        zoneBean = (ZoneBean) getIntent().getSerializableExtra("ZoneBean");
         //优先按主键从数据库读取最新数据
-        long zoneId = getIntent().getLongExtra(EXTRA_ZONE_ID, -1L);
-        if (zoneId > 0) {
-            ZoneBean dbZoneBean = GreenDaoHelper.getDaoSession(this).getZoneBeanDao().load(zoneId);
-            if (dbZoneBean != null) {
-                zoneBean = dbZoneBean;
-            }
-        }
+        zoneBean = resolveZoneBean();
         long projectId = getIntent().getLongExtra(EXTRA_PROJECT_ID, -1L);
         if (projectId > 0) {
             ProjectBean dbProjectBean = GreenDaoHelper.getDaoSession(this).getProjectBeanDao().load(projectId);
@@ -163,6 +156,26 @@ public class DataDetailsActivity extends BaseActivity<ActDataDetailsBinding> {
     }
 
     public ZoneBean getZoneBean() {
+        //页面因配置变更/进程恢复而重建时，Fragment 会在 initView() 之前于
+        //super.onCreate() 中恢复并回调 onAttach，此时 zoneBean 尚未赋值。
+        //这里做惰性解析，保证任何时刻都能拿到有效构件，避免 Fragment 空指针崩溃。
+        if (zoneBean == null) {
+            zoneBean = resolveZoneBean();
+        }
         return zoneBean;
+    }
+
+    /**
+     * 从 Intent 解析构件：优先按主键查库取最新数据，其次回退到序列化对象。
+     */
+    private ZoneBean resolveZoneBean() {
+        long zoneId = getIntent().getLongExtra(EXTRA_ZONE_ID, -1L);
+        if (zoneId > 0) {
+            ZoneBean dbZoneBean = GreenDaoHelper.getDaoSession(this).getZoneBeanDao().load(zoneId);
+            if (dbZoneBean != null) {
+                return dbZoneBean;
+            }
+        }
+        return (ZoneBean) getIntent().getSerializableExtra("ZoneBean");
     }
 }

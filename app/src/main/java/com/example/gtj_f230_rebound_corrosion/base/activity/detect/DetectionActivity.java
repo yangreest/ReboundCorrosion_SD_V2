@@ -17,6 +17,7 @@ import com.example.gtj_f230_rebound_corrosion.base.activity.data.DataDetailsActi
 import com.example.gtj_f230_rebound_corrosion.base.model.ProjectBean;
 import com.example.gtj_f230_rebound_corrosion.base.model.ZoneBean;
 import com.example.gtj_f230_rebound_corrosion.base.storage.GreenDaoHelper;
+import com.example.gtj_f230_rebound_corrosion.base.utils.RecycleBinUtils;
 import com.example.gtj_f230_rebound_corrosion.base.utils.SpinnerUtils;
 import com.example.gtj_f230_rebound_corrosion.base.view.StyleAlertDialog;
 import com.example.gtj_f230_rebound_corrosion.corrosion.activity.testing.CorrosionDetectActivity2;
@@ -27,7 +28,9 @@ import com.example.gtj_f230_rebound_corrosion.rebound.activity.testing.Rebounder
 import com.example.gtj_f230_rebound_corrosion.thickness.activity.DetectActivity;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 @SuppressLint("SetTextI18n")
 public class DetectionActivity extends BaseActivity<ActDetectionBinding> {
@@ -247,6 +250,11 @@ private void dotClick() {
             return;
         }
         zoneBean = zoneBeanList.get(0);
+        //防御：正在检测（含新建）的构件不应被回收站记录隐藏。回收站记录与数据库
+        //主键序列可能因数据库重建/恢复而不同步，导致新测试数据的主键命中旧回收站记录。
+        if (zoneBean.id != null) {
+            RecycleBinUtils.removeZones(Collections.singletonList(zoneBean.id));
+        }
 
         binding.tvF230Num.setText("测点数：" + (zoneBean.f230ZoneBean == null ? 0 : zoneBean.f230ZoneBean.zoneCount));
         binding.tvReboundNum.setText("测点数：" + (zoneBean.rebounderZoneBean == null ? 0 : zoneBean.rebounderZoneBean.zoneCount));
@@ -267,7 +275,18 @@ private void dotClick() {
     }
 
     private void setProjectList(boolean isLast) {
-        List<ProjectBean> projectBeanList = GreenDaoHelper.getDaoSession(this).getProjectBeanDao().loadAll();
+        //回收站中的工程不应出现在下拉框里
+        Set<Long> recycledProjectIds = RecycleBinUtils.getRecycledProjectIds();
+        List<ProjectBean> allProjectList = GreenDaoHelper.getDaoSession(this).getProjectBeanDao().loadAll();
+        List<ProjectBean> projectBeanList = new ArrayList<>();
+        if (allProjectList != null) {
+            for (ProjectBean bean : allProjectList) {
+                if (bean == null || bean.id == null || recycledProjectIds.contains(bean.id)) {
+                    continue;
+                }
+                projectBeanList.add(bean);
+            }
+        }
         List<String> projectList = new ArrayList<>();
         for (ProjectBean bean : projectBeanList) {
             projectList.add(bean.name);
@@ -277,7 +296,9 @@ private void dotClick() {
             binding.etAddress.setText(projectBeanList.get(position).getAddress());
         });
         if (isLast) {
-            binding.spProject.setDefaultContent(projectList.get(projectList.size() - 1));  //工程名称
+            if (!projectList.isEmpty()) {
+                binding.spProject.setDefaultContent(projectList.get(projectList.size() - 1));  //工程名称
+            }
         } else {
             ZoneBean lastZoneBean = GreenDaoHelper.getDaoSession(this).getZoneBeanDao().queryBuilder().orderDesc(ZoneBeanDao.Properties.Id).limit(1).unique();
             if (lastZoneBean != null) {
