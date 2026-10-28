@@ -117,7 +117,7 @@ public class CorrosionDetectActivity2 extends BaseActivity<ActDetect1Binding> {
         binding.navigationBar.setTitleText("锈蚀检测").setProjectName(zoneBean.projectName).setZoneName(zoneBean.number);
         //
         binding.layoutBase.setVisibility(View.VISIBLE);
-        binding.btnDetect.setVisibility(View.VISIBLE);
+        //binding.btnDetect.setVisibility(View.VISIBLE);
         binding.layoutStart.setVisibility(View.GONE);
     }
 
@@ -164,8 +164,8 @@ public class CorrosionDetectActivity2 extends BaseActivity<ActDetect1Binding> {
         signalArrayUtilsHor.setSize(64);
         bufferUtils = new DoubleRingBufferUtils(1024 * 8);
         spMac = SPUtils.getInstance().getString(StaticConstant.SP_CORROSION_BLE_MAC);
-        binding.layoutGridTop.tvGrid2.setVisibility(View.GONE);
-        binding.layoutGridTop.tvGrid3.setVisibility(View.GONE);
+        binding.layoutGridTop.tvGrid1.setVisibility(View.GONE);
+        //binding.layoutGridTop.tvGrid3.setVisibility(View.GONE);
         initExecutor();// 创建线程池
         initBluetooth();
         initOptimizedDataProcessor(); // 创建数据处理工具
@@ -1412,12 +1412,15 @@ public class CorrosionDetectActivity2 extends BaseActivity<ActDetect1Binding> {
         lastV1V7[6] = (int)valley7;
         lastSteelCorrResult = steelCorrResult;
         hasResult = true;
+        if (TextUtils.isEmpty(binding.etCorrosionDiameter.getText().toString().trim())) {
+            binding.etCorrosionDiameter.setText("9");
+        }
         CorrosionBean corrosionBean;
         if(!steelCorrResult.isCorroded()){
             stringBuilder.append("\n 无锈蚀");
             corrosionBean = new CorrosionBean(binding.etDistance.getText().toString().trim(),
-                    "9",
-                    "9",
+                    binding.etCorrosionDiameter.getText().toString().trim(),
+                    binding.etCorrosionDiameter.getText().toString().trim(),
                     "无锈蚀"
             );
             corrosionBeanList.add(corrosionBean);
@@ -1433,8 +1436,8 @@ public class CorrosionDetectActivity2 extends BaseActivity<ActDetect1Binding> {
 
         //Logger.e("锈蚀逻辑==== " + stringBuilder);
             corrosionBean = new CorrosionBean(binding.etDistance.getText().toString().trim(),
-                "9",
-                "9",
+                    binding.etCorrosionDiameter.getText().toString().trim(),
+                    binding.etCorrosionDiameter.getText().toString().trim(),
                 StringUtils.getRoundingString(corrodedRebarDiameter, 3)
                 );
             corrosionBeanList.add(corrosionBean);
@@ -1607,9 +1610,9 @@ public class CorrosionDetectActivity2 extends BaseActivity<ActDetect1Binding> {
         gridContentBinding.tvGridNumber.setText(position + 1 + "");
         gridContentBinding.tvGrid1.setText(corrosionBeanList.get(position).distance);
         gridContentBinding.tvGrid2.setText(corrosionBeanList.get(position).diameter);
-        gridContentBinding.tvGrid2.setVisibility(View.GONE);
+        gridContentBinding.tvGrid1.setVisibility(View.GONE);
         gridContentBinding.tvGrid3.setText(corrosionBeanList.get(position).strCheckArea);
-        gridContentBinding.tvGrid3.setVisibility(View.GONE);
+        //gridContentBinding.tvGrid3.setVisibility(View.GONE);
         gridContentBinding.tvGrid4.setText(corrosionBeanList.get(position).corrosion1);
     }
 
