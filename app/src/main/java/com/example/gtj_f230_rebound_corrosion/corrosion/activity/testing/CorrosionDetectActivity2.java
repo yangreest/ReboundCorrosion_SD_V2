@@ -89,6 +89,8 @@ public class CorrosionDetectActivity2 extends BaseActivity<ActDetect1Binding> {
     private boolean hasResult;
     private SteelCorrResult lastSteelCorrResult;
     private final int[] lastV1V7 = new int[7];
+    //最近一次保存/加载的曲线数据文件名，供“保存结果”按钮写入txt
+    private String lastCurveFileName = "";
 
     //下发指令：校准 AA 55 00 00 EC 31
     private static final byte[] CMD_CALIBRATION = {(byte) 0xAA, (byte) 0x55, (byte) 0x00, (byte) 0x00, (byte) 0xEC, (byte) 0x31};
@@ -1163,7 +1165,7 @@ public class CorrosionDetectActivity2 extends BaseActivity<ActDetect1Binding> {
     }
     /**
      * 将最近一次计算结果追加保存到txt文件。
-     * 每行格式：钢筋直径,保护层厚,锈蚀剩余,锈蚀结果,V1,V2,V3,V4,V5,V6,V7
+     * 每行格式：钢筋直径,腐蚀量,保护层厚度,保存曲线的文件名,V1,V2,V3,V4,V5,V6,V7,腐蚀度计算值
      */
     private void saveResultToTxt() {
         if (!hasResult || lastSteelCorrResult == null) {
@@ -1171,9 +1173,9 @@ public class CorrosionDetectActivity2 extends BaseActivity<ActDetect1Binding> {
             return;
         }
         String strRebarDiameter = binding.etCorrosionDiameter.getText().toString().trim();  //钢筋直径
-        String strCorrLeft = binding.etCorrLeft.getText().toString().trim();  //锈蚀剩余
+        String strCorrLeft = binding.etCorrLeft.getText().toString().trim();  //腐蚀量
         if (TextUtils.isEmpty(strRebarDiameter) || TextUtils.isEmpty(strCorrLeft)) {
-            ToastUtils.showShort("请填写钢筋直径和锈蚀剩余");
+            ToastUtils.showShort("请填写钢筋直径和腐蚀量");
             return;
         }
         //保护层厚：优先取输入框，未填写时取计算结果
@@ -1181,7 +1183,7 @@ public class CorrosionDetectActivity2 extends BaseActivity<ActDetect1Binding> {
         if (TextUtils.isEmpty(strCover)) {
             strCover = String.valueOf(lastSteelCorrResult.getCoverThickness());
         }
-        //锈蚀结果
+        //腐蚀度计算值
         String corrosionResult;
         if (lastSteelCorrResult.isCorroded()) {
             corrosionResult = StringUtils.getRoundingString(lastSteelCorrResult.getCorrosionRate() * 100, 3);
@@ -1190,12 +1192,13 @@ public class CorrosionDetectActivity2 extends BaseActivity<ActDetect1Binding> {
         }
         StringBuilder sb = new StringBuilder();
         sb.append(strRebarDiameter).append(",")
-                .append(strCover).append(",")
                 .append(strCorrLeft).append(",")
-                .append(corrosionResult);
-        for (double v : lastV1V7) {
+                .append(strCover).append(",")
+                .append(lastCurveFileName);
+        for (int v : lastV1V7) {
             sb.append(",").append(v);
         }
+        sb.append(",").append(corrosionResult);
         appendResultLine(sb.toString());
     }
 
@@ -1327,6 +1330,8 @@ public class CorrosionDetectActivity2 extends BaseActivity<ActDetect1Binding> {
         //文件数据写入缓存，供后续结算使用
         bufferUtils.clear();
         bufferUtils.addAll(data, 0, data.length);
+        //记录曲线来源文件名，供“保存结果”写入txt
+        lastCurveFileName = fileName;
         //刷新曲线显示
         showCurveLine(data);
         isSaveData = false;
@@ -1347,7 +1352,8 @@ public class CorrosionDetectActivity2 extends BaseActivity<ActDetect1Binding> {
         if(isSaveData) {
             // 生成日期字符串
             String strData = StringUtils.getStringTime(System.currentTimeMillis(), "yyyy-MM-dd_HHmmss");
-            writeDataToTxt(android.os.Environment.getExternalStorageDirectory() + "/GTJ",  "data_"+strData+".txt", data);
+            lastCurveFileName = "data_"+strData+".txt";
+            writeDataToTxt(android.os.Environment.getExternalStorageDirectory() + "/GTJ",  lastCurveFileName, data);
         }
         isSaveData = true;
 
