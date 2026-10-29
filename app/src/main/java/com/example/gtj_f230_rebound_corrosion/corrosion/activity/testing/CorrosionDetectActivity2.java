@@ -1186,7 +1186,7 @@ public class CorrosionDetectActivity2 extends BaseActivity<ActDetect1Binding> {
         if (lastSteelCorrResult.isCorroded()) {
             corrosionResult = StringUtils.getRoundingString(lastSteelCorrResult.getCorrosionRate() * 100, 3);
         } else {
-            corrosionResult = "无锈蚀";
+            corrosionResult = "no corrosion";
         }
         StringBuilder sb = new StringBuilder();
         sb.append(strRebarDiameter).append(",")
