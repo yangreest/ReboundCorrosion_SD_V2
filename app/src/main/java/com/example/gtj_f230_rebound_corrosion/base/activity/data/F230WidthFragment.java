@@ -98,26 +98,10 @@ public class F230WidthFragment extends Fragment {
         calWidth4 = SPUtils.getInstance().getFloat("cal-width-4", 279);
 
         initView();
-        initData(0);
     }
 
     @SuppressLint("SetTextI18n")
     private void initView() {
-        int fullWidth = SizeUtils.dp2px(656);
-        int fullHeight = (int) (fullWidth * StaticConstant.matrixRatio);
-        viewRatio = fullWidth / 640.0f;
-        LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) binding.layoutVideo.getLayoutParams();
-        layoutParams.width = fullWidth;
-        layoutParams.height = fullHeight;
-        binding.layoutVideo.setLayoutParams(layoutParams);
-
-        imageView = new ImageView(getContext());
-        binding.videoLayout.addView(imageView);
-        leftView = new TriangleLeftView(getContext(), false, fullHeight / 2);
-        rightView = new TriangleRightView(getContext(), false, fullHeight / 2);
-        binding.videoLayout.addView(leftView);
-        binding.videoLayout.addView(rightView);
-
         binding.rvSerialNum.setLayoutManager(new LinearLayoutManager(getContext()));
         serialNumAdapter = new F230SerialNumAdapter(getContext());
         binding.rvSerialNum.setAdapter(serialNumAdapter);
@@ -137,8 +121,51 @@ public class F230WidthFragment extends Fragment {
         binding.btnRBottom.setOnClickListener(this::onViewClicked);
         binding.btnRLeft.setOnClickListener(this::onViewClicked);
         binding.btnRRight.setOnClickListener(this::onViewClicked);
-        leftView.setPointTouchListener(this::treatWidth);
-        rightView.setPointTouchListener(this::treatWidth);
+        //图像区域按可用空间自适应计算尺寸，避免不同分辨率下左上角数据与下方按钮被裁剪
+        binding.layoutVideo.post(this::applyVideoSize);
+    }
+
+    /**
+     * 依据父容器实际可用空间计算图像区域尺寸（取可用宽与可用高按比例换算的较小值，并不超过设计宽656dp），
+     * 保证任意分辨率屏幕下图像、左上角灰底数据、下方按钮行均完整可见
+     */
+    private void applyVideoSize() {
+        if (binding == null || !isAdded()) {
+            return;
+        }
+        ViewGroup parent = (ViewGroup) binding.layoutVideo.getParent();
+        int availW = parent.getWidth();
+        //预留下方按钮行(49dp)及其上边距(13dp)
+        int availH = parent.getHeight() - SizeUtils.dp2px(62);
+        if (availW <= 0 || availH <= 0) {
+            //父容器尚未完成布局，下一帧再计算
+            binding.layoutVideo.post(this::applyVideoSize);
+            return;
+        }
+        double ratio = StaticConstant.matrixRatio;
+        int fullWidth = (int) Math.min(availW, availH / ratio);
+        fullWidth = Math.min(fullWidth, SizeUtils.dp2px(656));
+        int fullHeight = (int) (fullWidth * ratio);
+        viewRatio = fullWidth / 640.0f;
+        LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) binding.layoutVideo.getLayoutParams();
+        layoutParams.width = fullWidth;
+        layoutParams.height = fullHeight;
+        binding.layoutVideo.setLayoutParams(layoutParams);
+        //按钮行与图像同宽，保持视觉对齐
+        LinearLayout.LayoutParams buttonParams = (LinearLayout.LayoutParams) binding.llButtons.getLayoutParams();
+        buttonParams.width = fullWidth;
+        binding.llButtons.setLayoutParams(buttonParams);
+        if (imageView == null) {
+            imageView = new ImageView(getContext());
+            binding.videoLayout.addView(imageView);
+            leftView = new TriangleLeftView(getContext(), false, fullHeight / 2);
+            rightView = new TriangleRightView(getContext(), false, fullHeight / 2);
+            binding.videoLayout.addView(leftView);
+            binding.videoLayout.addView(rightView);
+            leftView.setPointTouchListener(this::treatWidth);
+            rightView.setPointTouchListener(this::treatWidth);
+            initData(0);
+        }
     }
 
     private void initData(int position) {
@@ -258,5 +285,10 @@ public class F230WidthFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         binding.videoLayout.removeAllViews();
+        //置空视图引用，避免 ViewPager2 重建视图时复用旧实例导致图像/三角标记未添加
+        imageView = null;
+        leftView = null;
+        rightView = null;
+        binding = null;
     }
 }
