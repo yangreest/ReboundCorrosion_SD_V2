@@ -67,7 +67,7 @@ public class CorrosionFragment extends Fragment {
         double designR = 0.0;
         try {
             designR = Double.parseDouble(zoneBean.corrosionZoneBean.rebarDiameter) / 2;
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException | NullPointerException e) {
             designR = 0.0;
         }
         double designArea = StringUtils.getRounding(Math.PI * designR * designR, 2);

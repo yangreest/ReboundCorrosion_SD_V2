@@ -80,6 +80,7 @@ public class DataDetailsActivity extends BaseActivity<ActDataDetailsBinding> {
         } else {
             fragments.add(new ThicknessFragment());
         }
+        fragments.add(new AssessmentFragment());
         DataResultAdapter adapter = new DataResultAdapter(this, fragments);
         binding.viewPager.setUserInputEnabled(false);
         binding.viewPager.setAdapter(adapter);
@@ -91,16 +92,25 @@ public class DataDetailsActivity extends BaseActivity<ActDataDetailsBinding> {
                         binding.tvF230.setSelected(true);
                         binding.tvRebound.setSelected(false);
                         binding.tvCorrosion.setSelected(false);
+                        binding.tvAssessment.setSelected(false);
                         break;
                     case 1:
                         binding.tvF230.setSelected(false);
                         binding.tvRebound.setSelected(true);
                         binding.tvCorrosion.setSelected(false);
+                        binding.tvAssessment.setSelected(false);
                         break;
                     case 2:
                         binding.tvF230.setSelected(false);
                         binding.tvRebound.setSelected(false);
                         binding.tvCorrosion.setSelected(true);
+                        binding.tvAssessment.setSelected(false);
+                        break;
+                    case 3:
+                        binding.tvF230.setSelected(false);
+                        binding.tvRebound.setSelected(false);
+                        binding.tvCorrosion.setSelected(false);
+                        binding.tvAssessment.setSelected(true);
                         break;
                 }
             }
@@ -110,6 +120,7 @@ public class DataDetailsActivity extends BaseActivity<ActDataDetailsBinding> {
         binding.tvF230.setOnClickListener(this::onViewClicked);
         binding.tvRebound.setOnClickListener(this::onViewClicked);
         binding.tvCorrosion.setOnClickListener(this::onViewClicked);
+        binding.tvAssessment.setOnClickListener(this::onViewClicked);
         binding.btnReturn.setOnClickListener(this::onViewClicked);
         boolean isCorrosion = TextUtils.equals(StaticConstant.APP_TYPE_DEFAULT, StaticConstant.APP_CORROSION);
         binding.tvCorrosion.setText(isCorrosion ? "锈蚀检测" : "保护层厚度检测");
@@ -139,17 +150,26 @@ public class DataDetailsActivity extends BaseActivity<ActDataDetailsBinding> {
             binding.tvF230.setSelected(true);
             binding.tvRebound.setSelected(false);
             binding.tvCorrosion.setSelected(false);
+            binding.tvAssessment.setSelected(false);
             binding.viewPager.setCurrentItem(0);
         } else if (view.getId() == R.id.tv_rebound) {
             binding.tvF230.setSelected(false);
             binding.tvRebound.setSelected(true);
             binding.tvCorrosion.setSelected(false);
+            binding.tvAssessment.setSelected(false);
             binding.viewPager.setCurrentItem(1);
         } else if (view.getId() == R.id.tv_corrosion) {
             binding.tvF230.setSelected(false);
             binding.tvRebound.setSelected(false);
             binding.tvCorrosion.setSelected(true);
+            binding.tvAssessment.setSelected(false);
             binding.viewPager.setCurrentItem(2);
+        } else if (view.getId() == R.id.tv_assessment) {
+            binding.tvF230.setSelected(false);
+            binding.tvRebound.setSelected(false);
+            binding.tvCorrosion.setSelected(false);
+            binding.tvAssessment.setSelected(true);
+            binding.viewPager.setCurrentItem(3);
         } else if (view.getId() == R.id.btn_return) {
             finish();
         }

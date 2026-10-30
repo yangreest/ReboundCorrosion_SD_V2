@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--综合评估表格行：轮次/测点 + 三项数据 + 状态/等级 + 操作-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="64dp"
+    android:orientation="horizontal">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="22"
+        android:background="@drawable/bg_assess_table_cell"
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        android:paddingLeft="8dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp">
+
+        <TextView
+            android:id="@+id/tv_row_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/color333"
+            android:textSize="18dp" />
+
+        <TextView
+            android:id="@+id/tv_row_sub"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/color666"
+            android:textSize="14dp" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_crack"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="12"
+        android:background="@drawable/bg_assess_table_cell"
+        android:gravity="center_vertical"
+        android:paddingLeft="8dp"
+        android:textColor="@color/color333"
+        android:textSize="18dp" />
+
+    <TextView
+        android:id="@+id/tv_strength"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="12"
+        android:background="@drawable/bg_assess_table_cell"
+        android:gravity="center_vertical"
+        android:paddingLeft="8dp"
+        android:textColor="@color/color333"
+        android:textSize="18dp" />
+
+    <TextView
+        android:id="@+id/tv_corrosion"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="12"
+        android:background="@drawable/bg_assess_table_cell"
+        android:gravity="center_vertical"
+        android:paddingLeft="8dp"
+        android:textColor="@color/color333"
+        android:textSize="18dp" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="20"
+        android:background="@drawable/bg_assess_table_cell"
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        android:paddingLeft="8dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp">
+
+        <TextView
+            android:id="@+id/tv_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/color333"
+            android:textSize="18dp" />
+
+        <TextView
+            android:id="@+id/tv_state"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/color666"
+            android:textSize="14dp" />
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="22"
+        android:background="@drawable/bg_assess_table_cell">
+
+        <TextView
+            android:id="@+id/btn_view"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_gravity="center"
+            android:background="@drawable/bg_assess_outline"
+            android:gravity="center"
+            android:paddingLeft="13dp"
+            android:paddingRight="13dp"
+            android:text="查看评估"
+            android:textColor="@color/theme_color"
+            android:textSize="18dp" />
+    </FrameLayout>
+</LinearLayout>

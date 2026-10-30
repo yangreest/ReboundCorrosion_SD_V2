@@ -13,6 +13,7 @@ import com.blankj.utilcode.util.ToastUtils;
 import com.example.gtj_f230_rebound_corrosion.R;
 import com.example.gtj_f230_rebound_corrosion.StaticConstant;
 import com.example.gtj_f230_rebound_corrosion.base.activity.BaseActivity;
+import com.example.gtj_f230_rebound_corrosion.base.activity.data.AssessmentActivity;
 import com.example.gtj_f230_rebound_corrosion.base.activity.data.DataDetailsActivity;
 import com.example.gtj_f230_rebound_corrosion.base.model.ProjectBean;
 import com.example.gtj_f230_rebound_corrosion.base.model.ZoneBean;
@@ -62,6 +63,7 @@ public class DetectionActivity extends BaseActivity<ActDetectionBinding> {
         binding.btnCorrosion.setOnClickListener(this::onViewClicked);
         binding.tvCorrosionSave.setOnClickListener(this::onViewClicked);
         binding.btnReturn.setOnClickListener(this::onViewClicked);
+        binding.btnAssessment.setOnClickListener(this::onViewClicked);
         setProjectList(false);
         boolean isCorrosion = TextUtils.equals(StaticConstant.APP_TYPE_DEFAULT, StaticConstant.APP_CORROSION);
         binding.tv01.setText(isCorrosion ? "锈蚀检测" : "保护层厚度检测");
@@ -184,6 +186,15 @@ public class DetectionActivity extends BaseActivity<ActDetectionBinding> {
                 intent.putExtra("index", 2);
                 startActivity(intent);
             }
+        } else if (view.getId() == binding.btnAssessment.getId()) {
+            if (zoneBean == null || zoneBean.id == null) {
+                ToastUtils.showShort("暂无检测数据，请先开始检测");
+                return;
+            }
+            intent = new Intent(this, AssessmentActivity.class);
+            intent.putExtra(AssessmentActivity.EXTRA_ZONE_ID, zoneBean.id);
+            intent.putExtra(AssessmentActivity.EXTRA_POINT_INDEX, 0);
+            startActivity(intent);
         } else if (view.getId() == binding.btnReturn.getId()) {
             if (zoneBean == null || (zoneBean.f230ZoneBean == null && zoneBean.rebounderZoneBean == null && zoneBean.corrosionZoneBean == null)) {
                 finish();

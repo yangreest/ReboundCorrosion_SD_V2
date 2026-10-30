@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--设计强度录入弹窗-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="480dp"
+    android:layout_height="wrap_content"
+    android:background="@color/colorFFF"
+    android:orientation="vertical"
+    android:padding="20dp">
+
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="录入设计强度"
+        android:textColor="@color/color333"
+        android:textSize="22dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="设计强度用于混凝土强度单项分级：实测强度低于设计强度判为 IV 级，否则判为 I 级。"
+        android:textColor="@color/color666"
+        android:textSize="16dp" />
+
+    <EditText
+        android:id="@+id/et_input"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginTop="13dp"
+        android:background="@drawable/bg_edittext"
+        android:hint="请输入设计强度（MPa）"
+        android:inputType="numberDecimal"
+        android:maxLength="6"
+        android:paddingLeft="13dp"
+        android:paddingRight="13dp"
+        android:singleLine="true"
+        android:textColor="@color/color333"
+        android:textCursorDrawable="@null"
+        android:textSize="21dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="49dp"
+        android:layout_marginTop="20dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btn_cancel"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/bg_button_18"
+            android:text="取消"
+            android:textColor="@color/colorFFF"
+            android:textSize="21dp" />
+
+        <Button
+            android:id="@+id/btn_ok"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="13dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_button_18"
+            android:text="确定"
+            android:textColor="@color/colorFFF"
+            android:textSize="21dp" />
+    </LinearLayout>
+</LinearLayout>
