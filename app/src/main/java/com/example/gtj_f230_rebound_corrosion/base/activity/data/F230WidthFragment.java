@@ -168,6 +168,14 @@ public class F230WidthFragment extends Fragment {
         }
     }
 
+    /**
+     * 存储坐标(656dp标准视图像素)到当前视图像素的换算比例，
+     * 保证图像自适应缩放后三角标记仍落在裂缝原位置，且导出/旧数据不受影响
+     */
+    private float coordScale() {
+        return viewRatio / (SizeUtils.dp2px(656) / 640.0f);
+    }
+
     private void initData(int position) {
         widthBeanList.get(showIndex).isSelected = false;
         widthBeanList.get(position).isSelected = true;
@@ -175,13 +183,14 @@ public class F230WidthFragment extends Fragment {
         widthBean = widthBeanList.get(showIndex);
         serialNumAdapter.notifyDataSetChanged();
 
+        float scale = coordScale();
         Glide.with(this).load(widthBean.imagePath).into(imageView);
-        leftView.currentX = widthBean.widthLeftX;
-        leftView.currentY = widthBean.widthLeftY;
-        leftView.setOutsidePoint(widthBean.widthRightX, widthBean.widthRightY);
-        rightView.currentX = widthBean.widthRightX;
-        rightView.currentY = widthBean.widthRightY;
-        rightView.setOutsidePoint(widthBean.widthLeftX, widthBean.widthLeftY);
+        leftView.currentX = widthBean.widthLeftX * scale;
+        leftView.currentY = widthBean.widthLeftY * scale;
+        leftView.setOutsidePoint(widthBean.widthRightX * scale, widthBean.widthRightY * scale);
+        rightView.currentX = widthBean.widthRightX * scale;
+        rightView.currentY = widthBean.widthRightY * scale;
+        rightView.setOutsidePoint(widthBean.widthLeftX * scale, widthBean.widthLeftY * scale);
         binding.tvWidth.setText(widthBean.width + "mm");
 
         binding.tvTime.setText(widthBean.time);
@@ -209,10 +218,12 @@ public class F230WidthFragment extends Fragment {
             binding.btnChange.setVisibility(VISIBLE);
             leftView.setFocus(false);
             rightView.setFocus(false);
-            widthBean.widthLeftX = leftView.currentX;
-            widthBean.widthRightX = rightView.currentX;
-            widthBean.widthLeftY = leftView.currentY;
-            widthBean.widthRightY = rightView.currentY;
+            //视图像素换算回656dp标准视图像素后存储
+            float inverse = 1 / coordScale();
+            widthBean.widthLeftX = leftView.currentX * inverse;
+            widthBean.widthRightX = rightView.currentX * inverse;
+            widthBean.widthLeftY = leftView.currentY * inverse;
+            widthBean.widthRightY = rightView.currentY * inverse;
             widthBean.width = modifyWidth;
             //
             for (int i = 0; i < widthBeanList.size(); i++) {
@@ -257,12 +268,13 @@ public class F230WidthFragment extends Fragment {
     }
 
     private void setTriangleViewRaw() {
-        leftView.currentX = widthBean.widthLeftXRaw;
-        leftView.currentY = widthBean.widthLeftYRaw;
-        leftView.setOutsidePoint(widthBean.widthRightXRaw, widthBean.widthRightYRaw);
-        rightView.currentX = widthBean.widthRightXRaw;
-        rightView.currentY = widthBean.widthRightYRaw;
-        rightView.setOutsidePoint(widthBean.widthLeftXRaw, widthBean.widthLeftYRaw);
+        float scale = coordScale();
+        leftView.currentX = widthBean.widthLeftXRaw * scale;
+        leftView.currentY = widthBean.widthLeftYRaw * scale;
+        leftView.setOutsidePoint(widthBean.widthRightXRaw * scale, widthBean.widthRightYRaw * scale);
+        rightView.currentX = widthBean.widthRightXRaw * scale;
+        rightView.currentY = widthBean.widthRightYRaw * scale;
+        rightView.setOutsidePoint(widthBean.widthLeftXRaw * scale, widthBean.widthLeftYRaw * scale);
         binding.tvWidth.setText(widthBean.width + "mm");
     }
 
