@@ -36,7 +36,9 @@ public class CorrosionBean implements Serializable {
         this.diameter = diameter; // 钢筋直径
        // double corr = Double.parseDouble(diameter) / Double.parseDouble(designSteelDameter) * 100;
         this.corrosion1 = corrosion1;
-        this.strCheckArea = Double.parseDouble(designSteelDameter) * (1.0- Double.parseDouble(corrosion1)*0.01)+"";
+        //corrosion1可能为非数值文本（如“无锈蚀”），此时按锈蚀度0计算，剩余直径即设计直径
+        double corrosionRate = parseCorrosionRate(corrosion1);
+        this.strCheckArea = Double.parseDouble(designSteelDameter) * (1.0- corrosionRate*0.01)+"";
 //        double designR = Double.parseDouble(designSteelDameter) / 2;
 //        double checkR = Double.parseDouble(diameter) / 2;
 //        //截面积
@@ -48,6 +50,15 @@ public class CorrosionBean implements Serializable {
     }
 
 
+
+    //解析锈蚀度文本，非数值（如“无锈蚀”）时返回0，避免NumberFormatException
+    private static double parseCorrosionRate(String corrosion1) {
+        try {
+            return Double.parseDouble(corrosion1);
+        } catch (NumberFormatException | NullPointerException e) {
+            return 0d;
+        }
+    }
 
     @NonNull
     @Override

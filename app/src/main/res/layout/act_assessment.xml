@@ -305,16 +305,34 @@
                     android:textSize="14dp" />
             </LinearLayout>
 
-            <Button
-                android:id="@+id/btn_save"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="49dp"
                 android:layout_marginLeft="13dp"
                 android:layout_marginRight="13dp"
-                android:background="@drawable/bg_button_18"
-                android:text="保存本轮评估"
-                android:textColor="@color/colorFFF"
-                android:textSize="21dp" />
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btn_save"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_button_18"
+                    android:text="保存本轮评估"
+                    android:textColor="@color/colorFFF"
+                    android:textSize="21dp" />
+
+                <Button
+                    android:id="@+id/btn_back"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_marginStart="10dp"
+                    android:background="@drawable/bg_button_18"
+                    android:text="返回"
+                    android:textColor="@color/colorFFF"
+                    android:textSize="21dp" />
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/tv_save_note"

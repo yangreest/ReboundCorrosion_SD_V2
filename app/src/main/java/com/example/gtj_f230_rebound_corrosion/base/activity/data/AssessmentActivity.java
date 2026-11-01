@@ -69,6 +69,7 @@ public class AssessmentActivity extends BaseActivity<ActAssessmentBinding> {
         binding.tvPointPrev.setOnClickListener(this::onViewClicked);
         binding.tvPointNext.setOnClickListener(this::onViewClicked);
         binding.btnSave.setOnClickListener(this::onViewClicked);
+        binding.btnBack.setOnClickListener(this::onViewClicked);
         refresh();
     }
 
@@ -104,6 +105,8 @@ public class AssessmentActivity extends BaseActivity<ActAssessmentBinding> {
         } else if (view.getId() == binding.btnSave.getId()) {
             AssessmentEngine.saveSnapshot(zoneBean.id, pointIndex, eval);
             ToastUtils.showShort("本轮评估已保存");
+        } else if (view.getId() == binding.btnBack.getId()) {
+            finish();
         }
     }
 
