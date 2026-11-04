@@ -166,8 +166,8 @@ public class CorrosionDetectActivity2 extends BaseActivity<ActDetect1Binding> {
         signalArrayUtilsHor.setSize(64);
         bufferUtils = new DoubleRingBufferUtils(1024 * 8);
         spMac = SPUtils.getInstance().getString(StaticConstant.SP_CORROSION_BLE_MAC);
-        binding.layoutGridTop.tvGrid2.setVisibility(View.GONE);
-        binding.layoutGridTop.tvGrid3.setVisibility(View.GONE);
+        //binding.layoutGridTop.tvGrid2.setVisibility(View.GONE);
+        //binding.layoutGridTop.tvGrid3.setVisibility(View.GONE);
         initExecutor();// 创建线程池
         initBluetooth();
         initOptimizedDataProcessor(); // 创建数据处理工具
@@ -1422,9 +1422,9 @@ public class CorrosionDetectActivity2 extends BaseActivity<ActDetect1Binding> {
         if(!steelCorrResult.isCorroded()){
             stringBuilder.append("\n 无锈蚀");
             corrosionBean = new CorrosionBean(binding.etDistance.getText().toString().trim(),
-                    "9",
-                    "9",
-                    "无锈蚀"
+                    binding.tvSteelDiameter.getText().toString().trim(),
+                    binding.tvSteelDiameter.getText().toString().trim(),
+                    "0"
             );
             corrosionBeanList.add(corrosionBean);
         }
@@ -1439,9 +1439,9 @@ public class CorrosionDetectActivity2 extends BaseActivity<ActDetect1Binding> {
 
         //Logger.e("锈蚀逻辑==== " + stringBuilder);
             corrosionBean = new CorrosionBean(binding.etDistance.getText().toString().trim(),
-                "9",
-                "9",
-                StringUtils.getRoundingString(corrodedRebarDiameter, 3)
+                    binding.tvSteelDiameter.getText().toString().trim(),
+                    binding.tvSteelDiameter.getText().toString().trim(),
+                StringUtils.getRoundingString(corrodedRebarDiameter, 2)
                 );
             corrosionBeanList.add(corrosionBean);
         }
@@ -1466,9 +1466,10 @@ public class CorrosionDetectActivity2 extends BaseActivity<ActDetect1Binding> {
         if (view.getId() == binding.btnDetect.getId())
         {
             //将本次计算结果追加保存到txt
-            saveResultToTxt();
-            bufferUtils.clear();
-            timerTimeVer = 0;
+            //saveResultToTxt();
+            //bufferUtils.clear();
+            //timerTimeVer = 0;
+            checkInfo();
         }
         else if(view.getId() == binding.btnTempLading.getId())
         {
@@ -1563,59 +1564,63 @@ public class CorrosionDetectActivity2 extends BaseActivity<ActDetect1Binding> {
         BluetoothManager.writeBluetooth(spMac, command);
     }
 
-    // Deleted:/**
-    // Deleted: * 检查并验证检测所需的基本信息
-    // Deleted: * 该方法获取界面输入参数，验证其完整性，保存到本地缓存，并切换界面状态以准备开始检测
-    // Deleted: * 包括电杆类型、规范、尺寸参数等信息的获取与验证
-    // Deleted: */
-    // Deleted:private boolean checkInfo() {
-    // Deleted:    String strPoleType = binding.spPoleType.getSelectedItem() + "";  //类型
-    // Deleted:    String strPoleStandard = binding.spPoleStandard.getSelectedItem() + "";  //规范
-    // Deleted:    String strPoleHeight = binding.etPoleHeight.getText().toString().trim();  //长度
-    // Deleted:    String strPoleBottomDiameter = binding.etPoleBottomDiameter.getText().toString().trim();  //根径
-    // Deleted:    String strPoleTopDiameter = binding.etPoleTopDiameter.getText().toString().trim();  //稍径
-    // Deleted:    String strRebarDiameter = binding.tvSteelDiameter.getText().toString().trim();  //设计纵筋直径
-    // Deleted:    String strDistance = binding.etDistance.getText().toString().trim();  //距离根部
-    // Deleted:
-    // Deleted:    // 验证所有必需参数是否已填写
-    // Deleted:    if (/*TextUtils.isEmpty(strPoleType) || TextUtils.isEmpty(strPoleStandard) ||*/ TextUtils.isEmpty(strPoleHeight) || TextUtils.isEmpty(strPoleBottomDiameter) || TextUtils.isEmpty(strPoleTopDiameter) /*|| TextUtils.isEmpty(strRebarDiameter) */|| TextUtils.isEmpty(strDistance)) {
-    // Deleted:        ToastUtils.showShort("请填写完整");
-    // Deleted:       // return;
-    // Deleted:        return false;
-    // Deleted:    }
-    // Deleted:
-    // Deleted:    // 保存参数到zoneBean对象
-    // Deleted:    zoneBean.corrosionZoneBean.poleType = binding.spPoleType.getSelectedItemPosition();
-    // Deleted:    zoneBean.corrosionZoneBean.poleStandard = binding.spPoleStandard.getSelectedItemPosition();
-    // Deleted:    zoneBean.corrosionZoneBean.poleHeight = strPoleHeight;
-    // Deleted:    zoneBean.corrosionZoneBean.poleBottomDiameter = strPoleBottomDiameter;
-    // Deleted:    zoneBean.corrosionZoneBean.poleTopDiameter = strPoleTopDiameter;
-    // Deleted:    zoneBean.corrosionZoneBean.Distance = strDistance;
-    // Deleted:    zoneBean.corrosionZoneBean.rebarDiameter ="";// strRebarDiameter;
-    // Deleted:
-    // Deleted:    // 将配置信息保存到本地缓存
-    // Deleted:    SPUtils.getInstance().put(StaticConstant.SP_CORROSION_LAST_CONFIG, new Gson().toJson(zoneBean.corrosionZoneBean));
-    // Deleted:
-    // Deleted:    // 设置参数为不可更改状态
-    // Deleted:    setParamNotChange();
-    // Deleted:
-    // Deleted:    // 切换界面布局，隐藏基础配置区域，显示开始检测区域
-    // Deleted:    binding.layoutBase.setVisibility(View.GONE);// 隐藏基础配置区域
-    // Deleted:    binding.btnDetect.setVisibility(View.GONE); // 隐藏开始检测按钮
-    // Deleted:    binding.layoutStart.setVisibility(View.INVISIBLE); // 显示开始检测区域
-    // Deleted:    //
-    // Deleted:    //setHorVer(1); // 设置初始为横向
-    // Deleted:    return true;
-    // Deleted:}
+    /**
+     * 检查并验证检测所需的基本信息
+     * 该方法获取界面输入参数，验证其完整性，保存到本地缓存，并切换界面状态以准备开始检测
+     * 包括电杆类型、规范、尺寸参数等信息的获取与验证
+     */
+    private boolean checkInfo() {
+        String strPoleType = binding.spPoleType.getSelectedItem() + "";  //类型
+        String strPoleStandard = binding.spPoleStandard.getSelectedItem() + "";  //规范
+        String strPoleHeight = binding.etPoleHeight.getText().toString().trim();  //长度
+        String strPoleBottomDiameter = binding.etPoleBottomDiameter.getText().toString().trim();  //根径
+        String strPoleTopDiameter = binding.etPoleTopDiameter.getText().toString().trim();  //稍径
+        String strRebarDiameter = binding.tvSteelDiameter.getText().toString().trim();  //设计纵筋直径
+        String strDistance = binding.etDistance.getText().toString().trim();  //距离根部
+
+        // 验证所有必需参数是否已填写
+        if (/*TextUtils.isEmpty(strPoleType) || TextUtils.isEmpty(strPoleStandard) ||*/
+            TextUtils.isEmpty(strPoleHeight) ||
+            TextUtils.isEmpty(strPoleBottomDiameter) ||
+            TextUtils.isEmpty(strPoleTopDiameter) /*|| TextUtils.isEmpty(strRebarDiameter) */||
+            TextUtils.isEmpty(strDistance)) {
+            ToastUtils.showShort("请填写完整");
+           // return;
+            return false;
+        }
+
+        // 保存参数到zoneBean对象
+        zoneBean.corrosionZoneBean.poleType = binding.spPoleType.getSelectedItemPosition();
+        zoneBean.corrosionZoneBean.poleStandard = binding.spPoleStandard.getSelectedItemPosition();
+        zoneBean.corrosionZoneBean.poleHeight = strPoleHeight;
+        zoneBean.corrosionZoneBean.poleBottomDiameter = strPoleBottomDiameter;
+        zoneBean.corrosionZoneBean.poleTopDiameter = strPoleTopDiameter;
+        zoneBean.corrosionZoneBean.Distance = strDistance;
+        zoneBean.corrosionZoneBean.rebarDiameter ="";// strRebarDiameter;
+
+        // 将配置信息保存到本地缓存
+        SPUtils.getInstance().put(StaticConstant.SP_CORROSION_LAST_CONFIG, new Gson().toJson(zoneBean.corrosionZoneBean));
+
+        // 设置参数为不可更改状态
+        setParamNotChange();
+
+        // 切换界面布局，隐藏基础配置区域，显示开始检测区域
+        //binding.layoutBase.setVisibility(View.GONE);// 隐藏基础配置区域
+        //binding.btnDetect.setVisibility(View.GONE); // 隐藏开始检测按钮
+        //binding.layoutStart.setVisibility(View.INVISIBLE); // 显示开始检测区域
+        //
+        //setHorVer(1); // 设置初始为横向
+        return true;
+    }
 
     @SuppressLint("SetTextI18n")
     private void configGrid(ViewGridContentBinding gridContentBinding, int position) {
         gridContentBinding.tvGridNumber.setText(position + 1 + "");
         gridContentBinding.tvGrid1.setText(corrosionBeanList.get(position).distance);
         gridContentBinding.tvGrid2.setText(corrosionBeanList.get(position).diameter);
-        gridContentBinding.tvGrid2.setVisibility(View.GONE);
+        //gridContentBinding.tvGrid2.setVisibility(View.GONE);
         gridContentBinding.tvGrid3.setText(corrosionBeanList.get(position).strCheckArea);
-        gridContentBinding.tvGrid3.setVisibility(View.GONE);
+        //gridContentBinding.tvGrid3.setVisibility(View.GONE);
         gridContentBinding.tvGrid4.setText(corrosionBeanList.get(position).corrosion1);
     }
 

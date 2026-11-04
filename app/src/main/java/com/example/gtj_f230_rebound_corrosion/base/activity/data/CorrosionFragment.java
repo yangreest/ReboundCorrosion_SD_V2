@@ -26,6 +26,7 @@ import com.example.gtj_f230_rebound_corrosion.databinding.ViewGridContentBinding
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @SuppressLint("SetTextI18n")
@@ -63,21 +64,26 @@ public class CorrosionFragment extends Fragment {
         binding.tvDiameterBottom.setText("D: " + zoneBean.corrosionZoneBean.poleBottomDiameter + "mm");
         binding.tvPoleHeight.setText("L: " + zoneBean.corrosionZoneBean.poleHeight + "m");
 
-        //截面积
-        double designR = 0.0;
-        try {
-            designR = Double.parseDouble(zoneBean.corrosionZoneBean.rebarDiameter) / 2;
-        } catch (NumberFormatException e) {
-            designR = 0.0;
+        List<CorrosionBean> corrosionBeanList = new ArrayList<>();
+        if (!TextUtils.isEmpty(zoneBean.corrosionZoneBean.strZoneList)) {
+            corrosionBeanList = new Gson().fromJson(zoneBean.corrosionZoneBean.strZoneList, new TypeToken<List<CorrosionBean>>() {
+            }.getType());
         }
-        double designArea = StringUtils.getRounding(Math.PI * designR * designR, 2);
+
+        //主筋直径：优先取构件配置，为空时回退取检测记录中的设计钢筋直径
+        String rebarDiameter = zoneBean.corrosionZoneBean.rebarDiameter;
+        if (TextUtils.isEmpty(rebarDiameter) && !corrosionBeanList.isEmpty()) {
+            rebarDiameter = corrosionBeanList.get(0).designSteelDameter;
+        }
+        //锈蚀剩余直径：取所有测点中的最小值（最不利测点）
+        String remainDiameter = getMinRemainDiameter(corrosionBeanList);
 
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("电杆类型：").append(StaticConstant.poleTypeList.get(zoneBean.corrosionZoneBean.poleType)).append("\n适用范围：").append(StaticConstant.poleStandardList.get(zoneBean.corrosionZoneBean.poleStandard)).append("\n测点数量：").append(zoneBean.corrosionZoneBean.zoneCount).append("\n主筋直径：").append(zoneBean.corrosionZoneBean.rebarDiameter).append("mm");
+        stringBuilder.append("电杆类型：").append(StaticConstant.poleTypeList.get(zoneBean.corrosionZoneBean.poleType)).append("\n适用范围：").append(StaticConstant.poleStandardList.get(zoneBean.corrosionZoneBean.poleStandard)).append("\n测点数量：").append(zoneBean.corrosionZoneBean.zoneCount).append("\n主筋直径：").append(rebarDiameter).append("mm");
 
         binding.tvInfo1.setText(stringBuilder);
         stringBuilder.delete(0, stringBuilder.length());
-        stringBuilder.append("电杆长度：").append(zoneBean.corrosionZoneBean.poleHeight).append("m").append("\n电杆根径：").append(zoneBean.corrosionZoneBean.poleBottomDiameter).append("mm").append("\n电杆稍径：").append(zoneBean.corrosionZoneBean.poleTopDiameter).append("mm").append("\n主筋截面积：").append(designArea).append("mm²");
+        stringBuilder.append("电杆长度：").append(zoneBean.corrosionZoneBean.poleHeight).append("m").append("\n电杆根径：").append(zoneBean.corrosionZoneBean.poleBottomDiameter).append("mm").append("\n电杆稍径：").append(zoneBean.corrosionZoneBean.poleTopDiameter).append("mm").append("\n锈蚀剩余直径：").append(remainDiameter).append("mm");
         binding.tvInfo2.setText(stringBuilder);
         refreshGrid();
     }
@@ -148,7 +154,7 @@ public class CorrosionFragment extends Fragment {
         middleLayoutParams.leftMargin = location_x;
         middleLayoutParams.height = height;
         view.setLayoutParams(middleLayoutParams);
-        textView.setText("锈蚀度: " + pageBean.corrosion + "%");
+        textView.setText("锈蚀度: " + (TextUtils.isEmpty(pageBean.corrosion1) ? pageBean.corrosion : pageBean.corrosion1) + "%");
         view.setVisibility(VISIBLE);
         textView.setVisibility(VISIBLE);
     }
@@ -177,8 +183,40 @@ public class CorrosionFragment extends Fragment {
         gridContentBinding.tvGridNumber.setText(position + 1 + "");
         gridContentBinding.tvGrid1.setText(corrosion.distance);
         gridContentBinding.tvGrid2.setText(corrosion.diameter);
-        gridContentBinding.tvGrid3.setText(corrosion.strCheckArea);
+        double remain = parseRemainDiameter(corrosion);
+        gridContentBinding.tvGrid3.setText(remain < 0 ? "" : StringUtils.getRounding(remain, 2) + "");
         gridContentBinding.tvGrid4.setText(corrosion.corrosion1);
+    }
+
+    /**
+     * 取所有测点中最小的锈蚀剩余直径（最不利测点），无有效值时返回空串
+     */
+    private String getMinRemainDiameter(List<CorrosionBean> corrosionBeanList) {
+        double min = Double.MAX_VALUE;
+        for (CorrosionBean bean : corrosionBeanList) {
+            double remain = parseRemainDiameter(bean);
+            if (remain >= 0 && remain < min) {
+                min = remain;
+            }
+        }
+        return min == Double.MAX_VALUE ? "" : StringUtils.getRounding(min, 2) + "";
+    }
+
+    /**
+     * 解析锈蚀剩余直径：优先取 strCheckArea，为空时按 实测直径×(1−纵筋锈蚀度/100) 计算，无法解析返回 -1
+     */
+    private double parseRemainDiameter(CorrosionBean bean) {
+        try {
+            if (!TextUtils.isEmpty(bean.strCheckArea)) {
+                return Double.parseDouble(bean.strCheckArea);
+            }
+            if (!TextUtils.isEmpty(bean.diameter) && !TextUtils.isEmpty(bean.corrosion1)) {
+                return Double.parseDouble(bean.diameter) * (100d - Double.parseDouble(bean.corrosion1)) * 0.01d;
+            }
+        } catch (NumberFormatException e) {
+            //忽略非数值文本（如"无锈蚀"）
+        }
+        return -1d;
     }
 
     private boolean checkLength(String distance) {

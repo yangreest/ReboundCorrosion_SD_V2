@@ -134,7 +134,7 @@
                     android:layout_marginTop="13dp"
                     android:orientation="horizontal"
                     android:paddingLeft="13dp"
-                    android:visibility="gone"
+
                     android:paddingRight="13dp">
 
                     <TextView
@@ -180,7 +180,7 @@
                     android:layout_marginTop="13dp"
                     android:orientation="horizontal"
                     android:paddingLeft="13dp"
-                    android:visibility="gone"
+
                     android:paddingRight="13dp">
 
                     <TextView
@@ -226,7 +226,7 @@
                     android:layout_marginTop="13dp"
                     android:orientation="horizontal"
                     android:paddingLeft="13dp"
-                    android:visibility="gone"
+
                     android:paddingRight="13dp">
 
                     <TextView
@@ -272,7 +272,7 @@
                     android:layout_marginTop="13dp"
                     android:orientation="horizontal"
                     android:paddingLeft="13dp"
-                    android:visibility="gone"
+
                     android:paddingRight="13dp">
 
                     <TextView
@@ -317,6 +317,7 @@
                 android:layout_marginTop="3dp"
                 android:orientation="horizontal"
                 android:paddingLeft="13dp"
+                android:visibility="gone"
                 android:paddingRight="13dp">
 
                 <TextView
@@ -362,6 +363,7 @@
                 android:layout_marginTop="3dp"
                 android:orientation="horizontal"
                 android:paddingLeft="13dp"
+                android:visibility="gone"
                 android:paddingRight="13dp">
 
                 <TextView
@@ -407,6 +409,7 @@
                 android:layout_marginTop="3dp"
                 android:orientation="horizontal"
                 android:paddingLeft="13dp"
+                android:visibility="gone"
                 android:paddingRight="13dp">
 
                 <TextView
@@ -447,25 +450,12 @@
                     android:textSize="21dp" />
             </LinearLayout>
 
-
-            <Button
-                android:id="@+id/btn_detect"
-                android:layout_width="158dp"
-                android:layout_height="30dp"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="10dp"
-                android:background="@drawable/bg_button_30"
-                android:text="保存结果"
-                android:textColor="@color/colorFFF"
-                android:textSize="20dp"
-                 />
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:layout_marginTop="13dp"
                 android:orientation="horizontal"
                 android:paddingLeft="13dp"
-                android:visibility="gone"
                 android:paddingRight="13dp">
 
                 <TextView
@@ -505,6 +495,18 @@
                     android:textColor="@color/color000"
                     android:textSize="21dp" />
             </LinearLayout>
+
+            <Button
+                android:id="@+id/btn_detect"
+                android:layout_width="158dp"
+                android:layout_height="60dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/bg_button_30"
+                android:text="保存信息"
+                android:textColor="@color/colorFFF"
+                android:textSize="30dp"
+                />
 
             <LinearLayout
                 android:id="@+id/layout_start"
@@ -756,6 +758,7 @@
         android:layout_marginLeft="13dp"
         android:layout_marginTop="6dp"
         android:layout_marginRight="13dp"
+        android:visibility="gone"
         android:orientation="horizontal">
 
         <Button
