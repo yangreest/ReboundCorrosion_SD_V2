@@ -1362,6 +1362,14 @@ public class CorrosionDetectActivity2 extends BaseActivity<ActDetect1Binding> {
         if (result.isEmpty()) {
             showCurveLine(data);
             ToastUtils.showLong("没有找到两个明显的波峰");
+            // 计算data最大值并显示
+            double maxValue = data[0];
+            for (int i = 1; i < data.length; i++) {
+                if (data[i] > maxValue) {
+                    maxValue = data[i];
+                }
+            }
+            binding.tvResult.setText("最大值: " + maxValue);
             return;
         }
         //波峰
