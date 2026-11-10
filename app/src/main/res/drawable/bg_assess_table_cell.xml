@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--综合评估表格单元格：白底，右、下灰边线-->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape>
+            <solid android:color="@color/colorFFF" />
+        </shape>
+    </item>
+    <item android:gravity="right">
+        <shape>
+            <solid android:color="@color/colorCCC" />
+            <size android:width="1px" />
+        </shape>
+    </item>
+    <item android:gravity="bottom">
+        <shape>
+            <solid android:color="@color/colorCCC" />
+            <size android:height="1px" />
+        </shape>
+    </item>
+</layer-list>

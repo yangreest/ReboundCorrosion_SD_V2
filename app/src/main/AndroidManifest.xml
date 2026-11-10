@@ -115,6 +115,10 @@
             android:screenOrientation="landscape"
             android:configChanges="orientation|screenSize|keyboardHidden|density|screenLayout" />
         <activity
+            android:name=".base.activity.data.AssessmentActivity"
+            android:screenOrientation="landscape"
+            android:configChanges="orientation|screenSize|keyboardHidden|density|screenLayout" />
+        <activity
             android:name=".base.activity.data.DataExportDataActivity"
             android:screenOrientation="landscape" />
         <activity

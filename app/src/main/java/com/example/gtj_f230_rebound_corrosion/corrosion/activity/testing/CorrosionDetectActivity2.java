@@ -119,7 +119,7 @@ public class CorrosionDetectActivity2 extends BaseActivity<ActDetect1Binding> {
         binding.navigationBar.setTitleText("锈蚀检测").setProjectName(zoneBean.projectName).setZoneName(zoneBean.number);
         //
         binding.layoutBase.setVisibility(View.VISIBLE);
-        binding.btnDetect.setVisibility(View.VISIBLE);
+        //binding.btnDetect.setVisibility(View.VISIBLE);
         binding.layoutStart.setVisibility(View.GONE);
     }
 
@@ -1426,6 +1426,9 @@ public class CorrosionDetectActivity2 extends BaseActivity<ActDetect1Binding> {
         lastV1V7[6] = (int)valley7;
         lastSteelCorrResult = steelCorrResult;
         hasResult = true;
+        if (TextUtils.isEmpty(binding.etCorrosionDiameter.getText().toString().trim())) {
+            binding.etCorrosionDiameter.setText("9");
+        }
         CorrosionBean corrosionBean;
         if(!steelCorrResult.isCorroded()){
             stringBuilder.append("\n 无锈蚀");
@@ -1460,7 +1463,7 @@ public class CorrosionDetectActivity2 extends BaseActivity<ActDetect1Binding> {
                 binding.etPrtceteLeft.setText(String.valueOf(steelCorrResult.getCoverThickness()));
             }
             refreshGrid();// 刷新钢筋列表
-            binding.tvResult.setText(sbd);
+            //binding.tvResult.setText(sbd);
             if (!StaticConstant.isRelease) {
                 //binding.tvResult.setText(corrosionBean.toString());
                 StyleAlertDialog2 styleAlertDialog = new StyleAlertDialog2(this);

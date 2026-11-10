@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--综合评估页签：轮次筛选 + 测点轮次评估表-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="13dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="轮次"
+            android:textColor="@color/color333"
+            android:textSize="21dp" />
+
+        <com.example.gtj_f230_rebound_corrosion.corrosion.view.SpinnerStaticView
+            android:id="@+id/sp_round"
+            android:layout_width="220dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="13dp"
+            android:background="@drawable/bg_edittext"
+            android:textColor="@color/color333"
+            android:textSize="18dp" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+        <TextView
+            android:id="@+id/btn_filter"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:background="@drawable/bg_assess_outline"
+            android:gravity="center"
+            android:paddingLeft="14dp"
+            android:paddingRight="14dp"
+            android:text="▶  筛选"
+            android:textColor="@color/theme_color"
+            android:textSize="18dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="13dp"
+        android:layout_weight="1"
+        android:background="@drawable/bg_assess_panel"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="22"
+                android:background="@drawable/bg_assess_table_head"
+                android:gravity="center_vertical"
+                android:paddingLeft="8dp"
+                android:text="轮次 / 测点"
+                android:textColor="@color/color333"
+                android:textSize="18dp" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="12"
+                android:background="@drawable/bg_assess_table_head"
+                android:gravity="center_vertical"
+                android:paddingLeft="8dp"
+                android:text="裂缝 mm"
+                android:textColor="@color/color333"
+                android:textSize="18dp" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="12"
+                android:background="@drawable/bg_assess_table_head"
+                android:gravity="center_vertical"
+                android:paddingLeft="8dp"
+                android:text="强度 MPa"
+                android:textColor="@color/color333"
+                android:textSize="18dp" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="12"
+                android:background="@drawable/bg_assess_table_head"
+                android:gravity="center_vertical"
+                android:paddingLeft="8dp"
+                android:text="锈蚀 %"
+                android:textColor="@color/color333"
+                android:textSize="18dp" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="20"
+                android:background="@drawable/bg_assess_table_head"
+                android:gravity="center_vertical"
+                android:paddingLeft="8dp"
+                android:text="状态 / 等级"
+                android:textColor="@color/color333"
+                android:textSize="18dp" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="22"
+                android:background="@drawable/bg_assess_table_head"
+                android:gravity="center_vertical"
+                android:paddingLeft="8dp"
+                android:text="操作"
+                android:textColor="@color/color333"
+                android:textSize="18dp" />
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_rounds"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <TextView
+            android:id="@+id/tv_null"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="暂无符合条件的测点轮次"
+            android:textColor="@color/color666"
+            android:textSize="20dp"
+            android:visibility="gone" />
+    </LinearLayout>
+</LinearLayout>

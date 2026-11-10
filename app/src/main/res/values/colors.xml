@@ -49,6 +49,15 @@
     <color name="color65B4AA">#65B4AA</color>
 
     <color name="theme_color">#006F5F</color>
+    <!--综合评估-->
+    <color name="assess_soft">#EEF5F3</color>
+    <color name="assess_pending_bg">#FFF3DF</color>
+    <color name="assess_urgent_bg">#FFF3EF</color>
+    <color name="assess_orange">#B66B12</color>
+    <color name="assess_yellow">#9D7D20</color>
+    <color name="assess_red">#C0392B</color>
+    <color name="assess_track">#E1E8E5</color>
+    <color name="assess_table_head">#E8E8E8</color>
     <color name="theme_color_80">#80006F5F</color>
     <color name="color000000">#000000</color>
     <color name="colorFF0000">#FF0000</color>

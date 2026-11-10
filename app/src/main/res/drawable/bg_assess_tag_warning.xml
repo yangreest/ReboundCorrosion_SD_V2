@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--综合评估警告tag：浅橙底直角-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="@color/assess_pending_bg" />
+</shape>

@@ -278,7 +278,7 @@ public class WidthDetectActivity extends BaseActivity<ActWidthDetectBinding> {
     }
 
     private void initStreamView() {
-        //设置VideoLayout宽高
+        //设置VideoLayout宽高（先按设计宽656dp取初值，布局完成后由 applyVideoSize 按可用空间自适应）
         int fullWidth = SizeUtils.dp2px(656);
         fullHeight = (int) (fullWidth * StaticConstant.matrixRatio);
         viewRatio = fullWidth / 640.0f;
@@ -312,6 +312,68 @@ public class WidthDetectActivity extends BaseActivity<ActWidthDetectBinding> {
         rightView = new TriangleRightView(this, false, fullHeight >> 1);
         binding.VideoLayout.addView(leftView);
         binding.VideoLayout.addView(rightView);
+        //图像区域按可用空间自适应计算尺寸，避免不同分辨率下左上角数据、提示文案与删除按钮被裁剪
+        binding.layoutVideo.post(this::applyVideoSize);
+    }
+
+    /**
+     * 依据面板实际可用空间计算图像区域尺寸（取可用宽与可用高按比例换算的较小值，并不超过设计宽656dp），
+     * 检测模式与已存测点模式共用同一尺寸，保证任意分辨率屏幕下控件均完整可见
+     */
+    private void applyVideoSize() {
+        if (isFinishing() || isDestroyed()) {
+            return;
+        }
+        View panel = (View) binding.llDetect.getParent();
+        int panelW = panel.getWidth();
+        int panelH = panel.getHeight();
+        if (panelW <= 0 || panelH <= 0) {
+            //面板尚未完成布局，下一帧再计算
+            binding.layoutVideo.post(this::applyVideoSize);
+            return;
+        }
+        //可用宽取较窄的已存测点模式（面板宽减去测点列表列119dp），保证两种模式均放得下
+        int availW = panelW - SizeUtils.dp2px(119);
+        //可用高减去49dp标题与底部控件：检测模式提示文案、已存模式删除按钮(39dp+13dp边距)，取较大预留
+        int hintH = binding.tvHint1.getHeight() > 0 ? binding.tvHint1.getHeight() : SizeUtils.dp2px(30);
+        int availH = panelH - SizeUtils.dp2px(49) - Math.max(hintH, SizeUtils.dp2px(52));
+        if (availW <= 0 || availH <= 0) {
+            binding.layoutVideo.post(this::applyVideoSize);
+            return;
+        }
+        double ratio = StaticConstant.matrixRatio;
+        int fullWidth = (int) Math.min(availW, availH / ratio);
+        fullWidth = Math.min(fullWidth, SizeUtils.dp2px(656));
+        int newHeight = (int) (fullWidth * ratio);
+        if (newHeight == fullHeight && binding.layoutVideo.getLayoutParams().width == fullWidth) {
+            return;
+        }
+        //三角标记按中心点偏移量平移，保持在裂缝上的相对位置
+        float delta = newHeight / 2f - fullHeight / 2f;
+        fullHeight = newHeight;
+        viewRatio = fullWidth / 640.0f;
+        LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) binding.layoutVideo.getLayoutParams();
+        layoutParams.width = fullWidth;
+        layoutParams.height = fullHeight;
+        binding.layoutVideo.setLayoutParams(layoutParams);
+        LinearLayout.LayoutParams dataParams = (LinearLayout.LayoutParams) binding.layoutDataVideo.getLayoutParams();
+        dataParams.width = fullWidth;
+        dataParams.height = fullHeight;
+        binding.layoutDataVideo.setLayoutParams(dataParams);
+        if (leftView != null && rightView != null) {
+            leftView.currentY += delta;
+            rightView.currentY += delta;
+            leftView.invalidate();
+            rightView.invalidate();
+        }
+    }
+
+    /**
+     * 存储坐标(656dp标准视图像素)到当前视图像素的换算比例，
+     * 保证图像自适应缩放后三角标记仍落在裂缝原位置，且导出/旧数据不受影响
+     */
+    private float coordScale() {
+        return viewRatio / (SizeUtils.dp2px(656) / 640.0f);
     }
 
     private void initDataLayout(int fullWidth) {
@@ -336,22 +398,23 @@ public class WidthDetectActivity extends BaseActivity<ActWidthDetectBinding> {
         showPosition = position;
         serialNumAdapter.notifyDataSetChanged();
 
+        float scale = coordScale();
         if (binding.VideoLayoutData.getChildCount() == 0) {
             ImageView imageView = new ImageView(this);
             binding.VideoLayoutData.addView(imageView);
-            dataLeftView = new TriangleLeftView(this, false, widthBeanList.get(showPosition).widthLeftX, widthBeanList.get(showPosition).widthLeftY);
-            dataRightView = new TriangleRightView(this, false, widthBeanList.get(showPosition).widthRightX, widthBeanList.get(showPosition).widthRightY);
+            dataLeftView = new TriangleLeftView(this, false, widthBeanList.get(showPosition).widthLeftX * scale, widthBeanList.get(showPosition).widthLeftY * scale);
+            dataRightView = new TriangleRightView(this, false, widthBeanList.get(showPosition).widthRightX * scale, widthBeanList.get(showPosition).widthRightY * scale);
             binding.VideoLayoutData.addView(dataLeftView);
             binding.VideoLayoutData.addView(dataRightView);
         }
         WidthBean showWidthBean = widthBeanList.get(showPosition);
         Glide.with(this).load(showWidthBean.imagePath).into((ImageView) binding.VideoLayoutData.getChildAt(0));
-        dataLeftView.currentX = showWidthBean.widthLeftX;
-        dataLeftView.currentY = showWidthBean.widthLeftY;
-        dataLeftView.setOutsidePoint(showWidthBean.widthRightX, showWidthBean.widthRightY);
-        dataRightView.currentX = showWidthBean.widthRightX;
-        dataRightView.currentY = showWidthBean.widthRightY;
-        dataRightView.setOutsidePoint(showWidthBean.widthLeftX, showWidthBean.widthLeftY);
+        dataLeftView.currentX = showWidthBean.widthLeftX * scale;
+        dataLeftView.currentY = showWidthBean.widthLeftY * scale;
+        dataLeftView.setOutsidePoint(showWidthBean.widthRightX * scale, showWidthBean.widthRightY * scale);
+        dataRightView.currentX = showWidthBean.widthRightX * scale;
+        dataRightView.currentY = showWidthBean.widthRightY * scale;
+        dataRightView.setOutsidePoint(showWidthBean.widthLeftX * scale, showWidthBean.widthLeftY * scale);
 
         binding.tvTimeData.setText(showWidthBean.time);
         binding.tvNumData.setText("测点：" + showWidthBean.id);
@@ -371,10 +434,12 @@ public class WidthDetectActivity extends BaseActivity<ActWidthDetectBinding> {
         WidthBean widthBean = new WidthBean();
         widthBean.id = currentId;
         widthBean.time = StringUtils.getTime();
-        widthBean.widthLeftX = leftView.currentX;
-        widthBean.widthRightX = rightView.currentX;
-        widthBean.widthLeftY = leftView.currentY;
-        widthBean.widthRightY = rightView.currentY;
+        //视图像素换算回656dp标准视图像素后存储
+        float inverse = 1 / coordScale();
+        widthBean.widthLeftX = leftView.currentX * inverse;
+        widthBean.widthRightX = rightView.currentX * inverse;
+        widthBean.widthLeftY = leftView.currentY * inverse;
+        widthBean.widthRightY = rightView.currentY * inverse;
         widthBean.width = measureWidth;
         //
         widthBean.imagePath = url;

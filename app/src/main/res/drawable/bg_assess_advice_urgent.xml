@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--综合评估处置建议框（紧急）：左侧红色竖条-->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape>
+            <solid android:color="@color/assess_red" />
+        </shape>
+    </item>
+    <item android:left="3dp">
+        <shape>
+            <solid android:color="@color/assess_urgent_bg" />
+        </shape>
+    </item>
+</layer-list>

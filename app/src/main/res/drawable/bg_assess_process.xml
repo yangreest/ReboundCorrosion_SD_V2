@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--综合评估过程框：浅绿底灰边框-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="@color/colorF2F8F8" />
+    <stroke
+        android:width="1px"
+        android:color="@color/colorDDD" />
+</shape>

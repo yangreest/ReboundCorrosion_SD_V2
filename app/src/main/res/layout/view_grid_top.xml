@@ -112,7 +112,7 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:gravity="center"
-                    android:text="实测直径(mm)"
+                    android:text="钢筋设计直径(mm)"
                     android:textColor="@color/theme_color"
                     android:textSize="18dp" />
 
