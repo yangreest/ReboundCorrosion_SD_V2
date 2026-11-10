@@ -77,8 +77,6 @@ public class CorrosionDetectActivity2 extends BaseActivity<ActDetect1Binding> {
     private final List<CorrosionBean> corrosionBeanList = new ArrayList<>();
     private Aa55FrameDataProcessor dataProcessor;
     private Handler dataProcessorHandler;
-    //private OptimizedDataProcessor dataProcessor;
-    //private Handler dataProcessorHandler;
     private Optimized10ElementTrimmedMeanUtils meanUtils;  //平均信号
     private RebarMinMaxBeanDao minMaxBeanDao;
     private int horVer;  //横向，竖向
@@ -87,13 +85,21 @@ public class CorrosionDetectActivity2 extends BaseActivity<ActDetect1Binding> {
     private int lastSignal;
     private DoubleRingBufferUtils bufferUtils;
 
+    //最近一次计算结果，供“保存结果”按钮写入txt
+    private boolean hasResult;
+    private SteelCorrResult lastSteelCorrResult;
+    private final int[] lastV1V7 = new int[7];
+    //最近一次保存/加载的曲线数据文件名，供“保存结果”按钮写入txt
+    private String lastCurveFileName = "";
+
     //下发指令：校准 AA 55 00 00 EC 31
     private static final byte[] CMD_CALIBRATION = {(byte) 0xAA, (byte) 0x55, (byte) 0x00, (byte) 0x00, (byte) 0xEC, (byte) 0x31};
     //下发指令：开始 AA 55 06 00 4C 32
     private static final byte[] CMD_START = {(byte) 0xAA, (byte) 0x55, (byte) 0x06, (byte) 0x00, (byte) 0x4C, (byte) 0x32};
     //下发指令：停止 AA 55 01 00 7C 30
     private static final byte[] CMD_STOP = {(byte) 0xAA, (byte) 0x55, (byte) 0x01, (byte) 0x00, (byte) 0x7C, (byte) 0x30};
-
+    //结果保存文件名（每次保存追加一行）
+    private static final String RESULT_FILE_NAME = "result.txt";
     private static final double[] temp = {265, 69, 68, 67, 68, 67, 66, 67, 68, 67, 66, 67, 68, 67, 68, 69, 68, 67, 65, 66, 67, 66, 67, 68, 69, 70, 71, 72, 74, 73, 75, 76, 81, 86, 87, 89, 91, 92, 98, 107, 113, 117, 119, 121, 134, 146, 150, 156, 161, 167, 172, 174, 208, 248, 254, 258, 269, 281, 322, 365, 383, 392, 400, 418, 504, 593, 620, 635, 648, 678, 712, 745, 952, 1160, 1210, 1267, 1322, 1381, 1673, 1970, 2042, 2112, 2183, 2262, 2537, 2814, 2895, 2934, 2977, 3062, 3480, 3884, 3945, 4009, 4071, 4130, 4315, 4487, 4510, 4526, 4516, 4486, 4458, 4427, 4392, 4354, 4076, 3789, 3724, 3650, 3574, 3497, 3101, 2704, 2630, 2594, 2554, 2473, 2209, 1951, 1880, 1810, 1743, 1676, 1398, 1130, 1085, 1041, 998, 957, 806, 664, 639, 617, 596, 574, 523, 476, 460, 449, 440, 430, 410, 397, 400, 405, 448, 496, 513, 530, 548, 567, 682, 809, 850, 888, 926, 968, 1136, 1310, 1365, 1422, 1484, 1548, 1561, 1615, 1684, 1935, 2188, 2265, 2693, 3116, 3227, 3307, 3341, 3616, 3878, 3911, 3942, 3972, 3996, 3994, 3973, 3948, 3916, 3793, 3665, 3616, 3560, 3503, 3445, 3080, 2716, 2651, 2578, 2507, 2472, 2172, 1840, 1777, 1722, 1666, 1606, 1445, 1291, 1243, 1195, 1152, 1108, 926, 749, 721, 697, 671, 646, 557, 472, 456, 443, 434, 424, 388, 358, 356, 353, 359, 368, 373, 380, 391, 400, 409, 421, 470, 521, 540, 560, 582, 603, 729, 860, 895, 935, 975, 1018, 1178, 1342, 1394, 1448, 1504, 1561, 1566, 1619, 1679, 1899, 2123, 2189, 2256, 2325, 2388, 2695, 3002, 3058, 3112, 3164, 3190, 3333, 3490, 3513, 3536, 3558, 3575, 3589, 3585, 3565, 3544, 3520, 3507, 3494, 3292, 3080, 3029, 2972, 2913, 2855, 2610, 2394, 2360, 2300, 2242, 2178, 2114, 2051, 1909, 1699, 1572, 1518, 1464, 1438, 1416, 1189, 967, 932, 898, 863, 845, 742, 625, 601, 581, 561, 538, 527, 517, 456, 400, 392, 382, 371, 366, 345, 326, 325, 327, 328, 342, 360, 367, 377, 387, 390, 396, 407, 496, 581, 592, 615, 638, 662, 769, 881, 920, 959, 980, 1002, 1194, 1394, 1453, 1513, 1578, 1641, 1704, 1765, 1802, 2169, 2572, 2665, 2758, 2844, 2933, 3219, 3499, 3586, 3681, 3779, 3871, 4202, 4525, 4598, 4667, 4727, 4784, 4842, 4877, 4903, 5050, 5186, 5204, 5219, 5170, 5097, 5063, 5026, 4984, 4939, 4716, 4485, 4418, 4353, 4286, 4214, 4138, 4062, 3939, 3669, 3446, 3370, 3293, 3219, 3184, 2851, 2486, 2418, 2348, 2279, 2214, 2061, 1940, 1909, 1849, 1791, 1736, 1685, 1634, 1581, 1370, 1164, 1125, 1089, 1049, 1015, 862, 725, 712, 686, 661, 637, 552, 467, 455, 450, 438, 422, 405, 389, 337, 292, 287, 275, 266, 256, 220, 183, 175, 170, 164, 159, 140, 122, 117, 112, 109, 106, 103, 93, 84, 80, 76, 75, 74, 65, 55, 53, 51, 49, 46, 44, 40, 39, 37, 35, 34, 33, 32, 29, 25, 23, 22, 23, 22, 20, 19, 18, 17, 15, 14, 13, 12, 9, 8, 9, 7, 5, 6, 5, 4, 3, 4, 5, 4, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 1, 0, 1, 2, 1, 3, 4, 5, 6, 4, 5, 8, 11, 13, 15, 16, 17, 20, 23, 24, 25, 33, 40, 41, 43, 44, 45, 44, 43, 42, 41, 42, 43, 45, 49, 51, 52, 55, 57, 60, 64, 67, 69, 72, 73, 72, 71, 70, 69, 68, 69, 70, 71, 74, 78, 79, 81, 85, 89, 92, 93, 94, 96, 98, 100, 103, 114, 127, 131, 134, 138, 142, 153, 168, 174, 176, 180, 183, 191, 199, 203, 207, 210, 213, 214, 219, 226, 229, 230, 231};
     //private boolean isDetecting;
 
@@ -160,8 +166,8 @@ public class CorrosionDetectActivity2 extends BaseActivity<ActDetect1Binding> {
         signalArrayUtilsHor.setSize(64);
         bufferUtils = new DoubleRingBufferUtils(1024 * 8);
         spMac = SPUtils.getInstance().getString(StaticConstant.SP_CORROSION_BLE_MAC);
-        binding.layoutGridTop.tvGrid2.setVisibility(View.GONE);
-        binding.layoutGridTop.tvGrid3.setVisibility(View.GONE);
+        //binding.layoutGridTop.tvGrid2.setVisibility(View.GONE);
+        //binding.layoutGridTop.tvGrid3.setVisibility(View.GONE);
         initExecutor();// 创建线程池
         initBluetooth();
         initOptimizedDataProcessor(); // 创建数据处理工具
@@ -251,6 +257,8 @@ public class CorrosionDetectActivity2 extends BaseActivity<ActDetect1Binding> {
         binding.tvSteelDiameter.setText(zoneBean.corrosionZoneBean.rebarDiameter);  //设计纵筋直径
         binding.etDistance.setText(zoneBean.corrosionZoneBean.Distance);
         setPoleTopDiameter(binding.spPoleType.getSelectedItemPosition());
+        //界面刷新即保存参数，不再依赖按钮触发
+        saveParams();
     }
 
     private final TextWatcher textWatcher = new TextWatcher() {
@@ -264,7 +272,9 @@ public class CorrosionDetectActivity2 extends BaseActivity<ActDetect1Binding> {
 
         @Override
         public void afterTextChanged(Editable s) {
+
             configCalibration();
+            saveParams();
         }
     };
 
@@ -330,7 +340,26 @@ public class CorrosionDetectActivity2 extends BaseActivity<ActDetect1Binding> {
         //电杆直径补偿
         poleCompensation = StringUtils.getRounding(ac - ad, 2);
     }
-
+    /**
+     * 将界面当前参数保存到 zoneBean 并持久化到本地缓存。
+     * 界面刷新或参数编辑时即保存，不再依赖按钮触发。
+     */
+    private void saveParams() {
+        if (zoneBean == null) {
+            return;
+        }
+        if (zoneBean.corrosionZoneBean == null) {
+            zoneBean.corrosionZoneBean = new CorrosionZoneBean();
+        }
+        zoneBean.corrosionZoneBean.poleType = binding.spPoleType.getSelectedItemPosition();
+        zoneBean.corrosionZoneBean.poleStandard = binding.spPoleStandard.getSelectedItemPosition();
+        zoneBean.corrosionZoneBean.poleHeight = binding.etPoleHeight.getText().toString().trim();
+        zoneBean.corrosionZoneBean.poleBottomDiameter = binding.etPoleBottomDiameter.getText().toString().trim();
+        zoneBean.corrosionZoneBean.poleTopDiameter = binding.etPoleTopDiameter.getText().toString().trim();
+        zoneBean.corrosionZoneBean.Distance = binding.etDistance.getText().toString().trim();
+        zoneBean.corrosionZoneBean.rebarDiameter = "";//设计纵筋直径改由输入框填写
+        SPUtils.getInstance().put(StaticConstant.SP_CORROSION_LAST_CONFIG, new Gson().toJson(zoneBean.corrosionZoneBean));
+    }
     private void initBluetooth() {
         BluetoothManager.registerConnectStatusListener(spMac, mBleConnectStatusListener);
         if (BluetoothManager.getConnectStatus(spMac)) {
@@ -1134,7 +1163,71 @@ public class CorrosionDetectActivity2 extends BaseActivity<ActDetect1Binding> {
         }
         return success;
     }
+    /**
+     * 将最近一次计算结果追加保存到txt文件。
+     * 每行格式：钢筋直径,腐蚀量,保护层厚度,保存曲线的文件名,V1,V2,V3,V4,V5,V6,V7,腐蚀度计算值
+     */
+    private void saveResultToTxt() {
+        if (!hasResult || lastSteelCorrResult == null) {
+            ToastUtils.showShort("请先获取曲线并计算完成结果");
+            return;
+        }
+        String strRebarDiameter = binding.etCorrosionDiameter.getText().toString().trim();  //钢筋直径
+        String strCorrLeft = binding.etCorrLeft.getText().toString().trim();  //腐蚀量
+        if (TextUtils.isEmpty(strRebarDiameter) || TextUtils.isEmpty(strCorrLeft)) {
+            ToastUtils.showShort("请填写钢筋直径和腐蚀量");
+            return;
+        }
+        //保护层厚：优先取输入框，未填写时取计算结果
+        String strCover = binding.etPrtceteLeft.getText().toString().trim();
+        if (TextUtils.isEmpty(strCover)) {
+            strCover = String.valueOf(lastSteelCorrResult.getCoverThickness());
+        }
+        //腐蚀度计算值
+        String corrosionResult;
+        if (lastSteelCorrResult.isCorroded()) {
+            corrosionResult = StringUtils.getRoundingString(lastSteelCorrResult.getCorrosionRate() * 100, 3);
+        } else {
+            corrosionResult = "no corrosion";
+        }
+        StringBuilder sb = new StringBuilder();
+        sb.append(strRebarDiameter).append(",")
+                .append(strCorrLeft).append(",")
+                .append(strCover).append(",")
+                .append(lastCurveFileName);
+        for (int v : lastV1V7) {
+            sb.append(",").append(v);
+        }
+        sb.append(",").append(corrosionResult);
+        appendResultLine(sb.toString());
+    }
 
+    /**
+     * 追加一行结果到GTJ目录下的result.txt，文件不存在时自动创建。
+     */
+    private void appendResultLine(String line) {
+        String dirPath = android.os.Environment.getExternalStorageDirectory() + "/GTJ";
+        File dir = new File(dirPath);
+        if (!dir.exists() && !dir.mkdirs()) {
+            ToastUtils.showShort("目录创建失败：" + dir.getAbsolutePath());
+            return;
+        }
+        File file = new File(dir, RESULT_FILE_NAME);
+        String content = line + "\n";
+        //若文件末尾没有换行符，先补一个换行，避免与上一行拼接
+        if (file.exists()) {
+            String old = FileIOUtils.readFile2String(file, "UTF-8");
+            if (!TextUtils.isEmpty(old) && !old.endsWith("\n")) {
+                content = "\n" + content;
+            }
+        }
+        boolean success = FileIOUtils.writeFileFromString(file, content, true);
+        if (success) {
+            ToastUtils.showShort("结果已保存到：" + file.getAbsolutePath());
+        } else {
+            ToastUtils.showShort("保存结果失败：" + file.getAbsolutePath());
+        }
+    }
     private void tempGetData()
     {
         // 造一组测试数据，满足波峰和波谷的趋势，给定源数据点，线性填充成8000组数据
@@ -1237,6 +1330,8 @@ public class CorrosionDetectActivity2 extends BaseActivity<ActDetect1Binding> {
         //文件数据写入缓存，供后续结算使用
         bufferUtils.clear();
         bufferUtils.addAll(data, 0, data.length);
+        //记录曲线来源文件名，供“保存结果”写入txt
+        lastCurveFileName = fileName;
         //刷新曲线显示
         showCurveLine(data);
         isSaveData = false;
@@ -1257,7 +1352,8 @@ public class CorrosionDetectActivity2 extends BaseActivity<ActDetect1Binding> {
         if(isSaveData) {
             // 生成日期字符串
             String strData = StringUtils.getStringTime(System.currentTimeMillis(), "yyyy-MM-dd_HHmmss");
-            writeDataToTxt(android.os.Environment.getExternalStorageDirectory() + "/GTJ",  "data_"+strData+".txt", data);
+            lastCurveFileName = "data_"+strData+".txt";
+            writeDataToTxt(android.os.Environment.getExternalStorageDirectory() + "/GTJ",  lastCurveFileName, data);
         }
         isSaveData = true;
 
@@ -1266,6 +1362,14 @@ public class CorrosionDetectActivity2 extends BaseActivity<ActDetect1Binding> {
         if (result.isEmpty()) {
             showCurveLine(data);
             ToastUtils.showLong("没有找到两个明显的波峰");
+            // 计算data最大值并显示
+            double maxValue = data[0];
+            for (int i = 1; i < data.length; i++) {
+                if (data[i] > maxValue) {
+                    maxValue = data[i];
+                }
+            }
+            binding.tvResult.setText("最大值: " + maxValue);
             return;
         }
         //波峰
@@ -1312,13 +1416,23 @@ public class CorrosionDetectActivity2 extends BaseActivity<ActDetect1Binding> {
         double valley6 = data[peaks.get(2)];
         double valley7 = data[valleys.get(2)];
         SteelCorrResult steelCorrResult =  calculate(valley1, valley2, valley4, valley6, valley7);
+        //缓存本次V1-V7与计算结果，供“保存结果”按钮写入txt
+        lastV1V7[0] = (int) valley1;
+        lastV1V7[1] = (int)valley2;
+        lastV1V7[2] = (int)data[point3Index];
+        lastV1V7[3] = (int)valley4;
+        lastV1V7[4] = (int)data[point5Index];
+        lastV1V7[5] = (int)valley6;
+        lastV1V7[6] = (int)valley7;
+        lastSteelCorrResult = steelCorrResult;
+        hasResult = true;
         CorrosionBean corrosionBean;
         if(!steelCorrResult.isCorroded()){
             stringBuilder.append("\n 无锈蚀");
             corrosionBean = new CorrosionBean(binding.etDistance.getText().toString().trim(),
-                    "9",
-                    "9",
-                    "无锈蚀"
+                    binding.tvSteelDiameter.getText().toString().trim(),
+                    binding.tvSteelDiameter.getText().toString().trim(),
+                    "0"
             );
             corrosionBeanList.add(corrosionBean);
         }
@@ -1333,16 +1447,20 @@ public class CorrosionDetectActivity2 extends BaseActivity<ActDetect1Binding> {
 
         //Logger.e("锈蚀逻辑==== " + stringBuilder);
             corrosionBean = new CorrosionBean(binding.etDistance.getText().toString().trim(),
-                "9",
-                "9",
-                StringUtils.getRoundingString(corrodedRebarDiameter, 3)
+                    binding.tvSteelDiameter.getText().toString().trim(),
+                    binding.tvSteelDiameter.getText().toString().trim(),
+                StringUtils.getRoundingString(corrodedRebarDiameter, 2)
                 );
             corrosionBeanList.add(corrosionBean);
         }
         //
         dataProcessorHandler.post(() -> {
+            //保护层厚未手动填写时，自动填入计算结果
+            if (TextUtils.isEmpty(binding.etPrtceteLeft.getText().toString().trim())) {
+                binding.etPrtceteLeft.setText(String.valueOf(steelCorrResult.getCoverThickness()));
+            }
             refreshGrid();// 刷新钢筋列表
-            //binding.tvResult.setText(sbd);
+            binding.tvResult.setText(sbd);
             if (!StaticConstant.isRelease) {
                 //binding.tvResult.setText(corrosionBean.toString());
                 StyleAlertDialog2 styleAlertDialog = new StyleAlertDialog2(this);
@@ -1355,14 +1473,11 @@ public class CorrosionDetectActivity2 extends BaseActivity<ActDetect1Binding> {
         OtherUtils.hideKeyboard(this);
         if (view.getId() == binding.btnDetect.getId())
         {
-           // checkInfo();
-            // Deleted:checkInfo();
-            // 按下开始检测：校验保存参数，蓝牙数据开始缓存到 bufferUtils
-            if (!checkInfo()) {
-                return;
-            }
-            bufferUtils.clear();
-            timerTimeVer = 0;
+            //将本次计算结果追加保存到txt
+            //saveResultToTxt();
+            //bufferUtils.clear();
+            //timerTimeVer = 0;
+            checkInfo();
         }
         else if(view.getId() == binding.btnTempLading.getId())
         {
@@ -1472,7 +1587,11 @@ public class CorrosionDetectActivity2 extends BaseActivity<ActDetect1Binding> {
         String strDistance = binding.etDistance.getText().toString().trim();  //距离根部
 
         // 验证所有必需参数是否已填写
-        if (/*TextUtils.isEmpty(strPoleType) || TextUtils.isEmpty(strPoleStandard) ||*/ TextUtils.isEmpty(strPoleHeight) || TextUtils.isEmpty(strPoleBottomDiameter) || TextUtils.isEmpty(strPoleTopDiameter) /*|| TextUtils.isEmpty(strRebarDiameter) */|| TextUtils.isEmpty(strDistance)) {
+        if (/*TextUtils.isEmpty(strPoleType) || TextUtils.isEmpty(strPoleStandard) ||*/
+            TextUtils.isEmpty(strPoleHeight) ||
+            TextUtils.isEmpty(strPoleBottomDiameter) ||
+            TextUtils.isEmpty(strPoleTopDiameter) /*|| TextUtils.isEmpty(strRebarDiameter) */||
+            TextUtils.isEmpty(strDistance)) {
             ToastUtils.showShort("请填写完整");
            // return;
             return false;
@@ -1494,9 +1613,9 @@ public class CorrosionDetectActivity2 extends BaseActivity<ActDetect1Binding> {
         setParamNotChange();
 
         // 切换界面布局，隐藏基础配置区域，显示开始检测区域
-        binding.layoutBase.setVisibility(View.GONE);// 隐藏基础配置区域
-        binding.btnDetect.setVisibility(View.GONE); // 隐藏开始检测按钮
-        binding.layoutStart.setVisibility(View.INVISIBLE); // 显示开始检测区域
+        //binding.layoutBase.setVisibility(View.GONE);// 隐藏基础配置区域
+        //binding.btnDetect.setVisibility(View.GONE); // 隐藏开始检测按钮
+        //binding.layoutStart.setVisibility(View.INVISIBLE); // 显示开始检测区域
         //
         //setHorVer(1); // 设置初始为横向
         return true;
@@ -1507,9 +1626,9 @@ public class CorrosionDetectActivity2 extends BaseActivity<ActDetect1Binding> {
         gridContentBinding.tvGridNumber.setText(position + 1 + "");
         gridContentBinding.tvGrid1.setText(corrosionBeanList.get(position).distance);
         gridContentBinding.tvGrid2.setText(corrosionBeanList.get(position).diameter);
-        gridContentBinding.tvGrid2.setVisibility(View.GONE);
+        //gridContentBinding.tvGrid2.setVisibility(View.GONE);
         gridContentBinding.tvGrid3.setText(corrosionBeanList.get(position).strCheckArea);
-        gridContentBinding.tvGrid3.setVisibility(View.GONE);
+        //gridContentBinding.tvGrid3.setVisibility(View.GONE);
         gridContentBinding.tvGrid4.setText(corrosionBeanList.get(position).corrosion1);
     }
 

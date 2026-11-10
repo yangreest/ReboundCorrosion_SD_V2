@@ -134,6 +134,7 @@
                     android:layout_marginTop="13dp"
                     android:orientation="horizontal"
                     android:paddingLeft="13dp"
+
                     android:paddingRight="13dp">
 
                     <TextView
@@ -179,6 +180,7 @@
                     android:layout_marginTop="13dp"
                     android:orientation="horizontal"
                     android:paddingLeft="13dp"
+
                     android:paddingRight="13dp">
 
                     <TextView
@@ -224,6 +226,7 @@
                     android:layout_marginTop="13dp"
                     android:orientation="horizontal"
                     android:paddingLeft="13dp"
+
                     android:paddingRight="13dp">
 
                     <TextView
@@ -269,7 +272,7 @@
                     android:layout_marginTop="13dp"
                     android:orientation="horizontal"
                     android:paddingLeft="13dp"
-                    android:visibility="gone"
+
                     android:paddingRight="13dp">
 
                     <TextView
@@ -306,6 +309,145 @@
                         android:textColor="@color/color000"
                         android:textSize="21dp" />
                 </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginTop="3dp"
+                android:orientation="horizontal"
+                android:paddingLeft="13dp"
+                android:visibility="gone"
+                android:paddingRight="13dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:gravity="center_vertical"
+                    android:text="钢筋直径："
+                    android:textColor="@color/color000"
+                    android:textSize="21dp" />
+
+                <EditText
+                    android:id="@+id/et_corrosion_diameter"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_edittext"
+                    android:cursorVisible="false"
+                    android:gravity="center_vertical"
+                    android:hint="请填写"
+                    android:inputType="numberDecimal"
+                    android:paddingLeft="13dp"
+                    android:paddingRight="13dp"
+                    android:singleLine="true"
+                    android:textColor="@color/color000"
+                    android:textCursorDrawable="@null"
+                    android:textSize="21dp" />
+
+                <TextView
+                    android:layout_width="47dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="2dp"
+                    android:background="@drawable/bg_edittext_gray"
+                    android:gravity="center"
+                    android:text="mm"
+                    android:textColor="@color/color000"
+                    android:textSize="21dp" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginTop="3dp"
+                android:orientation="horizontal"
+                android:paddingLeft="13dp"
+                android:visibility="gone"
+                android:paddingRight="13dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:gravity="center_vertical"
+                    android:text="锈蚀剩余："
+                    android:textColor="@color/color000"
+                    android:textSize="21dp" />
+
+                <EditText
+                    android:id="@+id/et_corr_left"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_edittext"
+                    android:cursorVisible="false"
+                    android:gravity="center_vertical"
+                    android:hint="请填写"
+                    android:inputType="numberDecimal"
+                    android:paddingLeft="13dp"
+                    android:paddingRight="13dp"
+                    android:singleLine="true"
+                    android:textColor="@color/color000"
+                    android:textCursorDrawable="@null"
+                    android:textSize="21dp" />
+
+                <TextView
+                    android:layout_width="47dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="2dp"
+                    android:background="@drawable/bg_edittext_gray"
+                    android:gravity="center"
+                    android:text="mm"
+                    android:textColor="@color/color000"
+                    android:textSize="21dp" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginTop="3dp"
+                android:orientation="horizontal"
+                android:paddingLeft="13dp"
+                android:visibility="gone"
+                android:paddingRight="13dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:gravity="center_vertical"
+                    android:text="保护层厚："
+                    android:textColor="@color/color000"
+                    android:textSize="21dp" />
+
+                <EditText
+                    android:id="@+id/et_prtcete_left"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_edittext"
+                    android:cursorVisible="false"
+                    android:gravity="center_vertical"
+                    android:hint="请填写"
+                    android:inputType="numberDecimal"
+                    android:paddingLeft="13dp"
+                    android:paddingRight="13dp"
+                    android:singleLine="true"
+                    android:textColor="@color/color000"
+                    android:textCursorDrawable="@null"
+                    android:textSize="21dp" />
+
+                <TextView
+                    android:layout_width="47dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="2dp"
+                    android:background="@drawable/bg_edittext_gray"
+                    android:gravity="center"
+                    android:text="mm"
+                    android:textColor="@color/color000"
+                    android:textSize="21dp" />
             </LinearLayout>
 
             <LinearLayout
@@ -357,14 +499,14 @@
             <Button
                 android:id="@+id/btn_detect"
                 android:layout_width="158dp"
-                android:layout_height="79dp"
+                android:layout_height="60dp"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="50dp"
+                android:layout_marginTop="10dp"
                 android:background="@drawable/bg_button_30"
-                android:text="开始检测"
+                android:text="保存信息"
                 android:textColor="@color/colorFFF"
-                android:textSize="29dp"
-                 />
+                android:textSize="30dp"
+                />
 
             <LinearLayout
                 android:id="@+id/layout_start"
@@ -616,6 +758,7 @@
         android:layout_marginLeft="13dp"
         android:layout_marginTop="6dp"
         android:layout_marginRight="13dp"
+        android:visibility="gone"
         android:orientation="horizontal">
 
         <Button

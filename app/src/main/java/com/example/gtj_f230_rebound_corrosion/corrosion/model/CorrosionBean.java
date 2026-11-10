@@ -10,7 +10,7 @@ public class CorrosionBean implements Serializable {
     public String distance;  //距离根部
     public String designSteelDameter;  //设计钢筋直径
     public String diameter;  //直径
-    public String strCheckArea;  //截面积
+    public String strCheckArea;  //截面积 // 也可作锈蚀剩余直径
     public String corrosion;  //锈蚀度
     public String corrosion1;  //锈蚀度（截面积）
 
@@ -34,8 +34,9 @@ public class CorrosionBean implements Serializable {
         this.distance = distance; // 距离根部
         this.designSteelDameter = designSteelDameter; // 设计钢筋直径
         this.diameter = diameter; // 钢筋直径
-       // double corr = Double.parseDouble(diameter) / Double.parseDouble(designSteelDameter) * 100;
+        double corr = Double.parseDouble(diameter) * (100.0-Double.parseDouble(corrosion1) ) * 0.01;
         this.corrosion1 = corrosion1;
+        this.strCheckArea = String.format("%.2f", corr);
 //        double designR = Double.parseDouble(designSteelDameter) / 2;
 //        double checkR = Double.parseDouble(diameter) / 2;
 //        //截面积
