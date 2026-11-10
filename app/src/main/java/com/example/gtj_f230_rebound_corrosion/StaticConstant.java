@@ -99,7 +99,7 @@ public class StaticConstant {
     //
     public static List<String> configList = Arrays.asList("190mm，10米杆，I级", "190mm，12米杆，M级", "190mm，15米杆，M级", "Z Ø150×8×G×Y", "Z Ø190×10×K×Y", "Z Ø190×12×K×Y", "Z Ø190×15×K×Y", "Z Ø190×12(6+6)×K×Y", "Z Ø190×15(9+6)×K×Y", "Z Ø190×12×100×BY", "Z Ø190×12×M×BY", "Z Ø190×15×M×BY", "Z Ø230×10×O×BY", "Z Ø230×12×125×BY", "Z Ø230×15×150×BY", "Z Ø350×15×U×BY", "Z Ø190×15(9+6)×100×BY", "Z Ø190×18(9+9)×M×BY", "Z Ø310×12(6+6)×O×BY", "Z Ø310×12(6+6)×U×BY", "Z Ø230×12(6+6)×O×BY");
     //规范
-    public static final List<String> poleStandardList = List.of("GB/T 4623-2014 环形混凝土电杆");
+    public static final List<String> poleStandardList = List.of("GB/T 4623-2025 环形混凝土电杆");
     //纵筋直径
 //    public static final List<String> rebarDiameterList = Arrays.asList("7", "9", "10", "11", "14");
     public static final List<String> rebarDiameterList = Arrays.asList("6", "7", "8", "9", "10", "11", "12", "14", "16", "18");

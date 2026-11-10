@@ -180,7 +180,7 @@ public class AssessmentActivity extends BaseActivity<ActAssessmentBinding> {
         binding.llAdvice.setBackgroundResource(urgent ? R.drawable.bg_assess_advice_urgent : R.drawable.bg_assess_advice);
         binding.tvAdviceTitle.setText(eval.adviceTitle);
         binding.tvAdviceDesc.setText(eval.adviceDesc);
-        binding.tvSaveNote.setText("仅保存 构件" + zoneBean.number + " / 测点" + (pointIndex + 1) + " · 历史记录不覆盖");
+        //binding.tvSaveNote.setText("仅保存 构件" + zoneBean.number + " / 测点" + (pointIndex + 1) + " · 历史记录不覆盖");
     }
 
     @SuppressLint("SetTextI18n")

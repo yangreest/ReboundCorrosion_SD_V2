@@ -79,7 +79,7 @@ public class CorrosionFragment extends Fragment {
         String remainDiameter = getMinRemainDiameter(corrosionBeanList);
 
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("电杆类型：").append(StaticConstant.poleTypeList.get(zoneBean.corrosionZoneBean.poleType)).append("\n适用范围：").append(StaticConstant.poleStandardList.get(zoneBean.corrosionZoneBean.poleStandard)).append("\n测点数量：").append(zoneBean.corrosionZoneBean.zoneCount).append("\n主筋直径：").append(rebarDiameter).append("mm");
+        stringBuilder.append("电杆类型：").append(StaticConstant.poleTypeList.get(zoneBean.corrosionZoneBean.poleType)).append("\n适用范围：").append(StaticConstant.poleStandardList.get(zoneBean.corrosionZoneBean.poleStandard)).append("\n测点数量：").append(zoneBean.corrosionZoneBean.zoneCount).append("\n钢筋设计直径：").append(rebarDiameter).append("mm");
 
         binding.tvInfo1.setText(stringBuilder);
         stringBuilder.delete(0, stringBuilder.length());

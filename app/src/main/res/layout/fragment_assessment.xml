@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--综合评估页签：轮次筛选 + 测点轮次评估表-->
+<!--综合评估页签：直接展示当前构件测点的三项检测结果 + 本轮综合评估-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -8,139 +8,301 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:gravity="center_vertical"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:orientation="horizontal">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="轮次"
-            android:textColor="@color/color333"
-            android:textSize="21dp" />
-
-        <com.example.gtj_f230_rebound_corrosion.corrosion.view.SpinnerStaticView
-            android:id="@+id/sp_round"
-            android:layout_width="220dp"
-            android:layout_height="40dp"
-            android:layout_marginStart="13dp"
-            android:background="@drawable/bg_edittext"
-            android:textColor="@color/color333"
-            android:textSize="18dp" />
-
-        <View
-            android:layout_width="0dp"
-            android:layout_height="1dp"
-            android:layout_weight="1" />
-
-        <TextView
-            android:id="@+id/btn_filter"
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:background="@drawable/bg_assess_outline"
-            android:gravity="center"
-            android:paddingLeft="14dp"
-            android:paddingRight="14dp"
-            android:text="▶  筛选"
-            android:textColor="@color/theme_color"
-            android:textSize="18dp" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="13dp"
-        android:layout_weight="1"
-        android:background="@drawable/bg_assess_panel"
-        android:orientation="vertical">
-
+        <!--左：本轮测点的三项检测结果-->
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="44dp"
-            android:orientation="horizontal">
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="65"
+            android:background="@drawable/bg_assess_panel"
+            android:orientation="vertical">
 
             <TextView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="22"
-                android:background="@drawable/bg_assess_table_head"
+                android:layout_width="match_parent"
+                android:layout_height="49dp"
+                android:background="@color/theme_color"
+                android:gravity="center"
+                android:text="本轮测点的三项检测结果"
+                android:textColor="@color/colorFFF"
+                android:textSize="24dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:gravity="center_vertical"
-                android:paddingLeft="8dp"
-                android:text="轮次 / 测点"
-                android:textColor="@color/color333"
-                android:textSize="18dp" />
+                android:orientation="horizontal"
+                android:paddingLeft="13dp"
+                android:paddingTop="5dp"
+                android:paddingRight="13dp"
+                android:paddingBottom="5dp">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tv_head_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/color333"
+                        android:textSize="18dp" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tv_point_prev"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="8dp"
+                    android:paddingRight="8dp"
+                    android:text="◀"
+                    android:textColor="@color/theme_color"
+                    android:textSize="18dp" />
+
+                <TextView
+                    android:id="@+id/tv_point_index"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/color666"
+                    android:textSize="16dp" />
+
+                <TextView
+                    android:id="@+id/tv_point_next"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="8dp"
+                    android:paddingRight="8dp"
+                    android:text="▶"
+                    android:textColor="@color/theme_color"
+                    android:textSize="18dp" />
+
+                <TextView
+                    android:id="@+id/tv_pill"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="13dp"
+                    android:background="@drawable/bg_assess_pill"
+                    android:paddingLeft="6dp"
+                    android:paddingTop="3dp"
+                    android:paddingRight="6dp"
+                    android:paddingBottom="3dp"
+                    android:textColor="@color/theme_color"
+                    android:textSize="14dp" />
+            </LinearLayout>
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:fillViewport="true">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingLeft="13dp"
+                    android:paddingRight="13dp">
+
+                    <include
+                        android:id="@+id/metric_crack"
+                        layout="@layout/item_assess_metric" />
+
+                    <include
+                        android:id="@+id/metric_strength"
+                        layout="@layout/item_assess_metric" />
+
+                    <include
+                        android:id="@+id/metric_corrosion"
+                        layout="@layout/item_assess_metric" />
+                </LinearLayout>
+            </ScrollView>
 
             <TextView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="12"
-                android:background="@drawable/bg_assess_table_head"
-                android:gravity="center_vertical"
-                android:paddingLeft="8dp"
-                android:text="裂缝 mm"
-                android:textColor="@color/color333"
-                android:textSize="18dp" />
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="12"
-                android:background="@drawable/bg_assess_table_head"
-                android:gravity="center_vertical"
-                android:paddingLeft="8dp"
-                android:text="强度 MPa"
-                android:textColor="@color/color333"
-                android:textSize="18dp" />
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="12"
-                android:background="@drawable/bg_assess_table_head"
-                android:gravity="center_vertical"
-                android:paddingLeft="8dp"
-                android:text="锈蚀 %"
-                android:textColor="@color/color333"
-                android:textSize="18dp" />
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="20"
-                android:background="@drawable/bg_assess_table_head"
-                android:gravity="center_vertical"
-                android:paddingLeft="8dp"
-                android:text="状态 / 等级"
-                android:textColor="@color/color333"
-                android:textSize="18dp" />
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="22"
-                android:background="@drawable/bg_assess_table_head"
-                android:gravity="center_vertical"
-                android:paddingLeft="8dp"
-                android:text="操作"
-                android:textColor="@color/color333"
-                android:textSize="18dp" />
+                android:id="@+id/tv_process"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="13dp"
+                android:layout_marginTop="7dp"
+                android:layout_marginRight="13dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/bg_assess_process"
+                android:lineSpacingExtra="5dp"
+                android:maxHeight="250dp"
+                android:padding="10dp"
+                android:textColor="@color/color666"
+                android:textSize="14dp" />
         </LinearLayout>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_rounds"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1" />
+        <!--右：本轮综合评估-->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="13dp"
+            android:layout_weight="35"
+            android:background="@drawable/bg_assess_panel"
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/tv_null"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="暂无符合条件的测点轮次"
-            android:textColor="@color/color666"
-            android:textSize="20dp"
-            android:visibility="gone" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="49dp"
+                android:background="@color/theme_color"
+                android:gravity="center"
+                android:text="本轮综合评估"
+                android:textColor="@color/colorFFF"
+                android:textSize="24dp" />
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:fillViewport="true">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="13dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/tv_sum_left"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:textColor="@color/color666"
+                            android:textSize="14dp" />
+
+                        <TextView
+                            android:id="@+id/tv_sum_pill"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_assess_pill"
+                            android:paddingLeft="6dp"
+                            android:paddingTop="3dp"
+                            android:paddingRight="6dp"
+                            android:paddingBottom="3dp"
+                            android:textColor="@color/theme_color"
+                            android:textSize="14dp" />
+                    </LinearLayout>
+
+                    <FrameLayout
+                        android:id="@+id/fl_progress"
+                        android:layout_width="match_parent"
+                        android:layout_height="4dp"
+                        android:layout_marginTop="7dp"
+                        android:layout_marginBottom="8dp"
+                        android:background="@drawable/bg_assess_track">
+
+                        <View
+                            android:id="@+id/v_progress_fill"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:background="@color/theme_color" />
+                    </FrameLayout>
+
+                    <TextView
+                        android:id="@+id/tv_big_grade"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/color999"
+                        android:textSize="34dp" />
+
+                    <TextView
+                        android:id="@+id/tv_sum_desc"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:textColor="@color/color666"
+                        android:textSize="14dp" />
+
+                    <TextView
+                        android:id="@+id/tv_known_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:text="已知单项风险"
+                        android:textColor="@color/theme_color"
+                        android:textSize="16dp" />
+
+                    <TextView
+                        android:id="@+id/tv_known_grade"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:textColor="@color/assess_orange"
+                        android:textSize="20dp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tv_known_controls"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:textColor="@color/color666"
+                        android:textSize="14dp" />
+
+                    <TextView
+                        android:id="@+id/tv_known_tip"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:text="综合等级待确认，保留已知单项风险提示"
+                        android:textColor="@color/color666"
+                        android:textSize="12dp" />
+                </LinearLayout>
+            </ScrollView>
+
+            <LinearLayout
+                android:id="@+id/ll_advice"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="13dp"
+                android:layout_marginTop="3dp"
+                android:layout_marginRight="13dp"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/bg_assess_advice"
+                android:orientation="vertical"
+                android:paddingLeft="9dp"
+                android:paddingTop="7dp"
+                android:paddingRight="9dp"
+                android:paddingBottom="7dp">
+
+                <TextView
+                    android:id="@+id/tv_advice_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/color333"
+                    android:textSize="17dp" />
+
+                <TextView
+                    android:id="@+id/tv_advice_desc"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:textColor="@color/color666"
+                    android:textSize="14dp" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btn_save"
+                android:layout_width="match_parent"
+                android:layout_height="49dp"
+                android:layout_marginLeft="13dp"
+                android:layout_marginRight="13dp"
+                android:background="@drawable/bg_button_18"
+                android:text="保存本轮评估"
+                android:textColor="@color/colorFFF"
+                android:textSize="21dp" />
+
+        </LinearLayout>
     </LinearLayout>
 </LinearLayout>

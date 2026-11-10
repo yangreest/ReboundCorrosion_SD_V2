@@ -324,12 +324,21 @@ public class AssessmentEngine {
         } else {
             process.append(eval.dataReady ? "三项采集已完成；请处理设计强度缺失或待复核事项。" : "三项数据尚未齐全，请补齐本轮缺项。");
         }
-        process.append("已知单项风险继续展示。");
-        process.append("\n");
-        if (basis != null && rebounderBean != null) {
-            process.append("设计强度 ").append(fmt(basis)).append(" MPa · ").append(strength.basisSummary);
-        } else {
-            process.append("强度比 q：待补充设计强度");
+        //process.append("已知单项风险继续展示。");
+        //强度依据：仅当本测点存在回弹（强度）数据时展示设计强度/强度比
+        if (rebounderBean != null) {
+            process.append("\n");
+            if (basis != null) {
+                process.append("设计强度 ").append(fmt(basis)).append(" MPa · ").append(strength.basisSummary);
+            } else {
+                process.append("强度比 q：待补充设计强度");
+            }
+        }
+        //按缺失的检测项逐项补充说明：每行一项，已有数据的检测项不描述
+        for (MetricEval metric : eval.metrics) {
+            if (!metric.hasData) {
+                process.append("\n").append(metric.shortName).append("未测试");
+            }
         }
         eval.processText = process.toString();
         return eval;

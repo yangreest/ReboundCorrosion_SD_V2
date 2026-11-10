@@ -58,12 +58,6 @@
                         android:textColor="@color/color333"
                         android:textSize="18dp" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="三项结果均关联本轮、同一测点"
-                        android:textColor="@color/color666"
-                        android:textSize="12dp" />
                 </LinearLayout>
 
                 <TextView
@@ -144,7 +138,7 @@
                 android:layout_marginBottom="10dp"
                 android:background="@drawable/bg_assess_process"
                 android:lineSpacingExtra="5dp"
-                android:maxHeight="83dp"
+                android:maxHeight="250dp"
                 android:padding="10dp"
                 android:textColor="@color/color666"
                 android:textSize="14dp" />
@@ -334,17 +328,6 @@
                     android:textSize="21dp" />
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/tv_save_note"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="13dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginRight="13dp"
-                android:layout_marginBottom="10dp"
-                android:gravity="center"
-                android:textColor="@color/color666"
-                android:textSize="12dp" />
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

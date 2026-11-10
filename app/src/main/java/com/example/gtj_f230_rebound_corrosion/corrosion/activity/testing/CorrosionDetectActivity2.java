@@ -1429,6 +1429,9 @@ public class CorrosionDetectActivity2 extends BaseActivity<ActDetect1Binding> {
         if (TextUtils.isEmpty(binding.etCorrosionDiameter.getText().toString().trim())) {
             binding.etCorrosionDiameter.setText("9");
         }
+        if (TextUtils.isEmpty(binding.tvSteelDiameter.getText().toString().trim())){
+            binding.tvSteelDiameter.setText("14");
+        }
         CorrosionBean corrosionBean;
         if(!steelCorrResult.isCorroded()){
             stringBuilder.append("\n 无锈蚀");
