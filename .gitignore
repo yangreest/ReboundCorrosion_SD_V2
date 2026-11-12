@@ -106,3 +106,4 @@ lint/tmp/
 gradlew.bat
 .idea
 
+*.dm

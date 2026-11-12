@@ -35,6 +35,7 @@ import com.example.gtj_f230_rebound_corrosion.corrosion.model.LineChartBean;
 import com.example.gtj_f230_rebound_corrosion.corrosion.model.RebarMinMaxBean;
 import com.example.gtj_f230_rebound_corrosion.corrosion.storage.CorrosionCurve;
 import com.example.gtj_f230_rebound_corrosion.corrosion.utils.Aa55FrameDataProcessor;
+import com.example.gtj_f230_rebound_corrosion.corrosion.utils.BpCorrosionPredictor;
 import com.example.gtj_f230_rebound_corrosion.corrosion.utils.LineChartManager;
 import com.example.gtj_f230_rebound_corrosion.corrosion.utils.OptimizedDataProcessor;
 import com.example.gtj_f230_rebound_corrosion.corrosion.utils.SignalArrayBufferUtils;
@@ -728,13 +729,15 @@ public class CorrosionDetectActivity2 extends BaseActivity<ActDetect1Binding> {
      * 主计算入口
      * @param v1 测点1电压 mV
      * @param v2 测点2电压 mV
+     * @param v3 测点3电压 mV
      * @param v4 测点4电压 mV
+     * @param v5 测点5电压 mV
      * @param v6 测点6电压 mV
      * @param v7 测点7电压 mV
      * @return 完整计算结果对象
      * @throws ArithmeticException V1+V7为0除零异常
      */
-    public static SteelCorrResult calculate(double v1, double v2, double v4, double v6, double v7) {
+    public static SteelCorrResult calculate(double v1, double v2, double v3, double v4, double v5, double v6, double v7) {
         // 1. 计算基础电压特征
         double v17 = (v1 + v7) / 2.0;
         double v26 = (v2 + v6) / 2.0;
@@ -748,13 +751,21 @@ public class CorrosionDetectActivity2 extends BaseActivity<ActDetect1Binding> {
         // 3. 根据V26判定保护层厚度
         int cover = judgeCoverThickness(v26);
 
-        // 4. 根据保护层匹配二次方程计算腐蚀度y、获取模型准确率
-        double[] fitParam = getFitParam(cover);
-        double a = fitParam[0];
-        double b = fitParam[1];
-        double c = fitParam[2];
-        double accuracy = fitParam[3];
-        double y = a * x * x + b * x + c;
+        // 4. 优先BP集成模型预测腐蚀度(百分比)，模型不可用时回退二次拟合
+        double bpPercent = BpCorrosionPredictor.predictPercent(new double[]{v1, v2, v3, v4, v5, v6, v7});
+        double y;
+        double accuracy;
+        if (!Double.isNaN(bpPercent)) {
+            y = bpPercent / 100.0;  //下游以比例为约定，百分比转比例
+            accuracy = 0; //BP模型不提供分层准确率，占位
+        } else {
+            double[] fitParam = getFitParam(cover);
+            double a = fitParam[0];
+            double b = fitParam[1];
+            double c = fitParam[2];
+            accuracy = fitParam[3];
+            y = a * x * x + b * x + c;
+        }
 
         // 5. 封装返回结果
         return new SteelCorrResult(v17, v26, x, cover, y, accuracy,x<=0.95);
@@ -1415,7 +1426,7 @@ public class CorrosionDetectActivity2 extends BaseActivity<ActDetect1Binding> {
         double valley4 = data[valleys.get(1)];
         double valley6 = data[peaks.get(2)];
         double valley7 = data[valleys.get(2)];
-        SteelCorrResult steelCorrResult =  calculate(valley1, valley2, valley4, valley6, valley7);
+        SteelCorrResult steelCorrResult =  calculate(valley1, valley2, data[point3Index], valley4, data[point5Index], valley6, valley7);
         //缓存本次V1-V7与计算结果，供“保存结果”按钮写入txt
         lastV1V7[0] = (int) valley1;
         lastV1V7[1] = (int)valley2;
