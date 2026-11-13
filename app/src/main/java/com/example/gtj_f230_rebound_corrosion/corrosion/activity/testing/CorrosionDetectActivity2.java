@@ -735,16 +735,15 @@ public class CorrosionDetectActivity2 extends BaseActivity<ActDetect1Binding> {
      * @param v6 测点6电压 mV
      * @param v7 测点7电压 mV
      * @return 完整计算结果对象
-     * @throws ArithmeticException V1+V7为0除零异常
      */
     public static SteelCorrResult calculate(double v1, double v2, double v3, double v4, double v5, double v6, double v7) {
         // 1. 计算基础电压特征
         double v17 = (v1 + v7) / 2.0;
         double v26 = (v2 + v6) / 2.0;
 
-        // 2. 计算商值x，防除零
+        // 2. 计算商值x，防除零：V1+V7均值为0时无有效信号，返回空结果不中断检测
         if (Math.abs(v17) < 1e-9) {
-            throw new ArithmeticException("V1+V7均值为0，无法计算腐蚀商值x");
+            return new SteelCorrResult(v17, v26, 0, judgeCoverThickness(v26), 0, 0, false);
         }
         double x = v4 / v17;
 
