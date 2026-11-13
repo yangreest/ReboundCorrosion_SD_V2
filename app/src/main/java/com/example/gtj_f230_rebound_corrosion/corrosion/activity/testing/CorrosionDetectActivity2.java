@@ -758,6 +758,7 @@ public class CorrosionDetectActivity2 extends BaseActivity<ActDetect1Binding> {
             y = bpPercent / 100.0;  //下游以比例为约定，百分比转比例
             accuracy = 0; //BP模型不提供分层准确率，占位
         } else {
+            ToastUtils.showLong("BP模型预测失败，使用二次拟合方法");
             double[] fitParam = getFitParam(cover);
             double a = fitParam[0];
             double b = fitParam[1];

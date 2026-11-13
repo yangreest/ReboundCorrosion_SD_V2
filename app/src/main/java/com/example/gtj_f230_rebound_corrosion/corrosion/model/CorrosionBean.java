@@ -39,7 +39,7 @@ public class CorrosionBean implements Serializable {
         this.strCheckArea = String.format("%.2f", corr);
         //corrosion1可能为非数值文本（如“无锈蚀”），此时按锈蚀度0计算，剩余直径即设计直径
         double corrosionRate = parseCorrosionRate(corrosion1);
-        this.strCheckArea = Double.parseDouble(designSteelDameter) * (1.0- corrosionRate*0.01)+"";
+        this.strCheckArea =String.format("%.2f", Double.parseDouble(designSteelDameter) * (1.0- corrosionRate*0.01));
 //        double designR = Double.parseDouble(designSteelDameter) / 2;
 //        double checkR = Double.parseDouble(diameter) / 2;
 //        //截面积
